@@ -33,4 +33,4 @@ The purpose is to express what is **declarative in rules**, and whatever is **pr
 
 The first release of the tool is very simple and basic, and will evolve with needs, to enhance control capabilities,
 expressiveness of rules, ease of use ... and more elaborate non regression test suite (based on jasmine) and 
-samples...
+samples.

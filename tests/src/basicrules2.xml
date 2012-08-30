@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RULES>
+  <RULE priority="18" mycondition="yes" >
+	<THEN>
+	  <LOG message="TCO RULE fired" />
+      <SET v="myvalue" />
+	</THEN>
+  </RULE>
+</RULES>

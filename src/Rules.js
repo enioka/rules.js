@@ -1,268 +1,271 @@
-//Copyright 2012 enioka. All rights reserved
-//Authors: Jean-Christophe Ferry (jean-christophe.ferry@enioka.com)
-
+// Copyright 2012 enioka. All rights reserved
+// Authors: Jean-Christophe Ferry (jean-christophe.ferry@enioka.com)
 
 var enioka = (enioka || {});
 
-enioka.rules = (function (eniokarules) {
-    
-    // Following code borrowed to Alex Arnell
-    // Some class mechanism was needed to make possible
-    // to subclass the RuleFact class by client applications
-    // somewhat of an overkill here...
-    
-    /*
-    Class, version 2.7
-    Copyright (c) 2006, 2007, 2008, Alex Arnell <alex@twologic.com>
-    Licensed under the new BSD License. See end of file for full license terms.
-     */
+/**
+ * @namespace enioka rule engine
+ */
+enioka.rules = (
+    function (eniokarules) {
+        // Following code borrowed to Alex Arnell
+        // Some class mechanism was needed to make possible
+        // to subclass the RuleFact class by client applications
+        // somewhat of an overkill here...
 
-    var Class = (function() {
-        var __extending = {};
+        /*
+         Class, version 2.7
+         Copyright (c) 2006, 2007, 2008, Alex Arnell <alex@twologic.com>
+         Licensed under the new BSD License. See end of file for full license terms.
+         */
 
-        return {
-            extend: function(parent, def) {
-                if (arguments.length == 1) { def = parent; parent = null; }
-                var func = function() {
-                    if (arguments[0] ==  __extending) { return; }
-                    this.initialize.apply(this, arguments);
-                };
-                if (typeof(parent) == 'function') {
-                    func.prototype = new parent( __extending);
-                }
-                var mixins = [];
-                if (def && def.include) {
-                    if (def.include.reverse) {
-                        // methods defined in later mixins should override prior
-                        mixins = mixins.concat(def.include.reverse());
-                    } else {
-                        mixins.push(def.include);
-                    }
-                    delete def.include; // clean syntax sugar
-                }
-                if (def) Class.inherit(func.prototype, def);
-                for (var i = 0; (mixin = mixins[i]); i++) {
-                    Class.mixin(func.prototype, mixin);
-                }
-                return func;
-            },
-            mixin: function (dest, src, clobber) {
-                clobber = clobber || false;
-                if (typeof(src) != 'undefined' && src !== null) {
-                    for (var prop in src) {
-                        if (clobber || (!dest[prop] && typeof(src[prop]) == 'function')) {
-                            dest[prop] = src[prop];
-                        }
-                    }
-                }
-                return dest;
-            },
-            inherit: function(dest, src, fname) {
-                if (arguments.length == 3) {
-                    var ancestor = dest[fname], descendent = src[fname], method = descendent;
-                    descendent = function() {
-                        var ref = this.parent; this.parent = ancestor;
-                        var result = method.apply(this, arguments);
-                        ref ? this.parent = ref : delete this.parent;
-                        return result;
-                    };
-                    // mask the underlying method
-                    descendent.valueOf = function() { return method; };
-                    descendent.toString = function() { return method.toString(); };
-                    dest[fname] = descendent;
-                } else {
-                    for (var prop in src) {
-                        if (dest[prop] && typeof(src[prop]) == 'function') {
-                            Class.inherit(dest, src, prop);
-                        } else {
-                            dest[prop] = src[prop];
-                        }
-                    }
-                }
-                return dest;
-            },
-            singleton: function() {
-                var args = arguments;
-                if (args.length == 2 && args[0].getInstance) {
-                    var klass = args[0].getInstance(__extending);
-                    // we're extending a singleton swap it out for it's class
-                    if (klass) { args[0] = klass; }
-                }
+        var Class = (function() {
+                         var __extending = {};
 
-                return (function(args){
-                    // store instance and class in private variables
-                    var instance = false;
-                    var klass = Class.extend.apply(args.callee, args);
-                    return {
-                        getInstance: function () {
-                            if (arguments[0] == __extending) return klass;
-                            if (instance) return instance;
-                            return (instance = new klass());
-                        }
-                    };
-                })(args);
-            }
+                         return {
+                             extend: function(parent, def) {
+                                 if (arguments.length == 1) { def = parent; parent = null; }
+                                 var func = function() {
+                                     if (arguments[0] ==  __extending) { return; }
+                                     this.initialize.apply(this, arguments);
+                                 };
+                                 if (typeof(parent) == 'function') {
+                                     func.prototype = new parent( __extending);
+                                 }
+                                 var mixins = [];
+                                 if (def && def.include) {
+                                     if (def.include.reverse) {
+                                         // methods defined in later mixins should override prior
+                                         mixins = mixins.concat(def.include.reverse());
+                                     } else {
+                                         mixins.push(def.include);
+                                     }
+                                     delete def.include; // clean syntax sugar
+                                 }
+                                 if (def) Class.inherit(func.prototype, def);
+                                 for (var i = 0; (mixin = mixins[i]); i++) {
+                                     Class.mixin(func.prototype, mixin);
+                                 }
+                                 return func;
+                             },
+                             mixin: function (dest, src, clobber) {
+                                 clobber = clobber || false;
+                                 if (typeof(src) != 'undefined' && src !== null) {
+                                     for (var prop in src) {
+                                         if (clobber || (!dest[prop] && typeof(src[prop]) == 'function')) {
+                                             dest[prop] = src[prop];
+                                         }
+                                     }
+                                 }
+                                 return dest;
+                             },
+                             inherit: function(dest, src, fname) {
+                                 if (arguments.length == 3) {
+                                     var ancestor = dest[fname], descendent = src[fname], method = descendent;
+                                     descendent = function() {
+                                         var ref = this.parent; this.parent = ancestor;
+                                         var result = method.apply(this, arguments);
+                                         ref ? this.parent = ref : delete this.parent;
+                                         return result;
+                                     };
+                                     // mask the underlying method
+                                     descendent.valueOf = function() { return method; };
+                                     descendent.toString = function() { return method.toString(); };
+                                     dest[fname] = descendent;
+                                 } else {
+                                     for (var prop in src) {
+                                         if (dest[prop] && typeof(src[prop]) == 'function') {
+                                             Class.inherit(dest, src, prop);
+                                         } else {
+                                             dest[prop] = src[prop];
+                                         }
+                                     }
+                                 }
+                                 return dest;
+                             },
+                             singleton: function() {
+                                 var args = arguments;
+                                 if (args.length == 2 && args[0].getInstance) {
+                                     var klass = args[0].getInstance(__extending);
+                                     // we're extending a singleton swap it out for it's class
+                                     if (klass) { args[0] = klass; }
+                                 }
+
+                                 return (function(args){
+                                             // store instance and class in private variables
+                                             var instance = false;
+                                             var klass = Class.extend.apply(args.callee, args);
+                                             return {
+                                                 getInstance: function () {
+                                                     if (arguments[0] == __extending) return klass;
+                                                     if (instance) return instance;
+                                                     return (instance = new klass());
+                                                 }
+                                             };
+                                         })(args);
+                             }
+                         };
+                     })();
+
+        // finally remap Class.create for backward compatability with prototype
+        Class.create = function() {
+            return Class.extend.apply(this, arguments);
         };
-    })();
 
-    // finally remap Class.create for backward compatability with prototype
-    Class.create = function() {
-        return Class.extend.apply(this, arguments);
-    };
+        /*
+         Redistribution and use in source and binary forms, with or without modification, are
+         permitted provided that the following conditions are met:
 
-    /*
-    Redistribution and use in source and binary forms, with or without modification, are
-    permitted provided that the following conditions are met:
+         * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+         * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+         * Neither the name of typicalnoise.com nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific prior
+         written permission.
 
-     * Redistributions of source code must retain the above copyright notice, this list
-      of conditions and the following disclaimer.
-     * Redistributions in binary form must reproduce the above copyright notice, this
-      list of conditions and the following disclaimer in the documentation and/or other
-      materials provided with the distribution.
-     * Neither the name of typicalnoise.com nor the names of its contributors may be
-      used to endorse or promote products derived from this software without specific prior
-      written permission.
+         THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+         EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+         MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+         THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+         SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+         OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+         HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+         TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+         SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+         */
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
-    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
-    THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
-    OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-    TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     */
-    
-    
-    
-    // Small utility functions here
-    
-    // Computes the size of an object in number of own properties
-    // Used to estimate key "spread" for ordering keys in rule index
-    function objectSize(object) {
-        var size = 0;
 
-        for (key in object) {
-            if (object.hasOwnProperty(key))
-                size++;
-        }
-        return size;
-    }
 
-    // Very dirty utility to look for specified children in path
-    // Should be replaced by more efficient cross browser/javascript runtine XML XPATH like utility
-    function getMatchingTags(data, path, array) {
-        //console.log('Looking for path = ' , path, ' @' , data.tagName);
-        if (path === "") {
-            return;
-        }
+        // Small utility functions here
 
-        var index = path.indexOf("/");
-        var children = data.childNodes;
-        var i;
-        var son;
-        if (path.charAt(0) === '*') {
-            for (i = 0; i < children.length; i++) {
-                son = children.item(i);
-                if (son.nodeType !== 1) {
-                    continue;
-                }
-                if (index === -1) {
-                    array.push(son);
-                }
-                if (index > 0) {
-                    getMatchingTags(son, path.substr(index + 1), array);
-                }
-                if (index > 1) {
-                    getMatchingTags(son, path, array);
-                }
+        // Computes the size of an object in number of own properties
+        // Used to estimate key "spread" for ordering keys in rule index
+        function objectSize(object) {
+            var size = 0;
+
+            for (key in object) {
+                if (object.hasOwnProperty(key))
+                    size++;
             }
-        } else {
-            var tag;
-            if (index !== -1) {
-                tag = path.substr(0, index);
+            return size;
+        }
+
+        // Very dirty utility to look for specified children in path
+        // Should be replaced by more efficient cross browser/javascript runtine XML XPATH like utility
+        function getMatchingTags(data, path, array) {
+            //console.log('Looking for path = ' , path, ' @' , data.tagName);
+            if (path === "") {
+                return;
+            }
+
+            var index = path.indexOf("/");
+            var children = data.childNodes;
+            var i;
+            var son;
+            if (path.charAt(0) === '*') {
+                for (i = 0; i < children.length; i++) {
+                    son = children.item(i);
+                    if (son.nodeType !== 1) {
+                        continue;
+                    }
+                    if (index === -1) {
+                        array.push(son);
+                    }
+                    if (index > 0) {
+                        getMatchingTags(son, path.substr(index + 1), array);
+                    }
+                    if (index > 1) {
+                        getMatchingTags(son, path, array);
+                    }
+                }
             } else {
-                tag = path;
-            }
-            //console.log('Looking for tag = ' + tag);
-            children = data.childNodes;
-            for (i = 0; i < children.length; i++) {
-                son = children.item(i);
-                if (son.nodeType !== 1) {
-                    continue;
+                var tag;
+                if (index !== -1) {
+                    tag = path.substr(0, index);
+                } else {
+                    tag = path;
                 }
-                if (son.tagName !== tag){
-                    continue;
-                }
-                if (index === -1) {
-                    array.push(son);
-                }
-                if (index > 0) {
-                    getMatchingTags(son, path.substr(index + 1), array);
+                //console.log('Looking for tag = ' + tag);
+                children = data.childNodes;
+                for (i = 0; i < children.length; i++) {
+                    son = children.item(i);
+                    if (son.nodeType !== 1) {
+                        continue;
+                    }
+                    if (son.tagName !== tag){
+                        continue;
+                    }
+                    if (index === -1) {
+                        array.push(son);
+                    }
+                    if (index > 0) {
+                        getMatchingTags(son, path.substr(index + 1), array);
+                    }
                 }
             }
         }
-    }
 
-    // Implements the "intersection" between to arrays
-    // Used to implement the built in "INTERSECTS" condition type
-    // that fires whenever two lists (or elements) have a non 
-    // empty element in common
-    function intersection (array1, array2) {
-        var ret = [];
-        if (("undefined" === typeof array1) || ("undefined" === typeof array2) ||
+        // Implements the "intersection" between to arrays
+        // Used to implement the built in "INTERSECTS" condition type
+        // that fires whenever two lists (or elements) have a non
+        // empty element in common
+        function intersection (array1, array2) {
+            var ret = [];
+            if (("undefined" === typeof array1) || ("undefined" === typeof array2) ||
                 (null === array1) || (null === array2)) {
+                return false;
+            }
+
+            if ((array1.constructor !== Array) &&
+                (array2.constructor !== Array)) {
+                return array1 === array2;
+            }
+
+            if (array1.constructor !== Array) {
+                return 0 <= array2.indexOf(array1);
+            }
+            if (array2.constructor !== Array) {
+                return 0 <= array1.indexOf(array2);
+                if (0 <= array2.indexOf(e1)) {
+                    return true;
+                }
+            }
             return false;
         }
 
-        if ((array1.constructor !== Array) &&
-                (array2.constructor !== Array)) {
-            return array1 === array2;
-        }
-
-        if (array1.constructor !== Array) {
-            return 0 <= array2.indexOf(array1);
-        }
-        if (array2.constructor !== Array) {
-            return 0 <= array1.indexOf(array2);
-            if (0 <= array2.indexOf(e1)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    
-    /*
-     * The Rule Context class
-     * 
-     * The Rule Context is the way through which the engine holds grip on objects
-     * on which it performs its reasoning. It holds also the required cache for efficient
-     * data access.
-     * 
-     * This class is not directly exposed in the API. It is used internally by the engine.
-     * A rule context is allocated for each call of the engine and holds the
-     * grip on all variables on which the engine will apply rules
-     * 
-     * For more advanced uses, one may need to access and manipulate this
-     * context from the outside. Still, this is a bad idea for the moment
-     * since this object holds whatever "cache" is needed to  assess
-     * rule conditions efficiently. Hence direct access to this context should
-     * not be granted for the moment explicitely.
-     */
-
-    var RuleContext = {
-            /*
-             * @constructor
-             * @param properties : the properties is the 'flat' Object to be passed over to the engine.
-             * Its attributes will be the names that will be used to access objects of the world.
-             * 
+        var RuleContext = {
+            /**
+             * The Rule Context class
+             * <br/>
+             * <br/>
+             * The Rule Context is the way through which the engine holds grip on objects
+             * on which it performs its reasoning. It holds also the required cache for efficient
+             * data access.
+             * <br/>
+             * <br/>
+             * This class is not directly exposed in the API. It is used internally by the engine.
+             * A rule context is allocated for each call of the engine and holds the
+             * grip on all variables on which the engine will apply rules
+             * <br/>
+             * <br/>
+             * For more advanced uses, one may need to access and manipulate this
+             * context from the outside. Still, this is a bad idea for the moment
+             * since this object holds whatever "cache" is needed to  assess
+             * rule conditions efficiently. Hence direct access to this context should
+             * not be granted for the moment explicitely.
+             * @constructs
+             * @param properties The properties is the 'flat' Object to be passed over to the engine.\n
+             * Its attributes will be the names that will be used to access objects of the world.\n
+             *
              * This may not be a flat object and be a custom class. This is possible as long
              * as this object has a "defaultWrapper" attribute holding a default wrapper to use to access its
-             * contents.
-             * 
-             * If the object is actually flat, it will be wrapped by a built in wrapper, @see RuleFact.
+             * contents.\n
+             *
+             * If the object is actually flat, it will be wrapped by a built in wrapper, {@link enioka.rules-RuleFact}.
+
+             *
              */
             initialize : function(properties) {
                 this.wrapCache = new Object();
@@ -281,26 +284,26 @@ enioka.rules = (function (eniokarules) {
                     if (properties.constructor == Object) {
                         this.values = new RuleFact(properties);
                     } else {
-                        this.values = this.wrapObject("", this.values, null);                    
-                    } 
+                        this.values = this.wrapObject("", this.values, null);
+                    }
                 } else {
                     this.values = properties;
                 }
             },
 
-            /*
+            /**
              * This method checks that a given condition is true or false in the current context
              * As explained in the general documentation, a number of predefined conditions exist
              * but it may be extended at will with specific condition handlers supplied at the
-             * creation of the engine. 
-             * 
+             * creation of the engine.
+             *
              * Predefined conditions are :
              * * LESS or <
              * * MORE or >
              * * LIKE
              * * EQUAL
-             * * INTERSECTS 
-             * 
+             * * INTERSECTS
+             *
              * Elementary conditions can then be used in combinations
              * * NOT
              * * OR
@@ -317,22 +320,22 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /*
+            /**
              * This method executes a given action in the current context
              * As explained in the general documentation, a number of predefined actions exist
              * but it may be extended at will with specific action handlers supplied at the
-             * creation of the engine. 
-             * 
+             * creation of the engine.
+             *
              * Predefined actions are available to produce results or act on the objects :
-             * * SET 
-             * * DSET 
-             * * ADD 
-             * * DADD 
-             * 
+             * * SET
+             * * DSET
+             * * ADD
+             * * DADD
+             *
              * Other actions make possible some control over the execution of the engine
              * * CONTROL
              * * RECURSE
-             * * CHOOSE 
+             * * CHOOSE
              */
             fireAction : function(action, rule) {
                 var engine = this.getEngine();
@@ -341,32 +344,33 @@ enioka.rules = (function (eniokarules) {
                     return actionHandler(this,action, rule);
                 } else {
                     console.log('Unhandled action :', action);
-                    return;
+                    return null;
                 }
             },
 
-            /* 
+            /**
              * Gets the engine associated to this context.
-             */  
+             */
             getEngine : function() {
                 return this.engine;
             },
 
-            /* 
+            /**
              * Sets the engine associated to this context.
-             */  
+             */
             setEngine : function(engine) {
                 return this.engine = engine;
             },
 
-            /* 
+            /**
              * Default wrapper to objects of the world
+             * @private
              */
             _defaultWrapper : function(object, path, context, father) {
                 return new RuleExternalObject(object, path, context, father);
             },
 
-            /*
+            /**
              * During evaluation, rules may be nested. Their conditions are
              * evaluated once only and then cached (unless a recurse or choose
              * control invalidates it)
@@ -375,28 +379,28 @@ enioka.rules = (function (eniokarules) {
                 this.rulesEvalCache = new Object();
             },
 
-            /*
-             * Checks if a rule has been evaluated already 
+            /**
+             * Checks if a rule has been evaluated already
              */
             hasRuleEval : function (rule) {
                 return (typeof(this.rulesEvalCache[rule]) !== 'undefined');
             },
 
-            /*
+            /**
              * Retrieves cached rule's evaluation
              */
             getRuleEval : function (rule) {
                 return this.rulesEvalCache[rule.id];
             },
 
-            /*
-             * Sets cached rule's evaluation 
+            /**
+             * Sets cached rule's evaluation
              */
             setRuleEval : function (rule, match) {
                 return this.rulesEvalCache[rule.id]=match;
             },
 
-            /*
+            /**
              * Wraps an object along its access path, so that this object
              * can be used in object traversal as well. This wrapping mechanism
              * is quite extensible for a smooth integration with native objects
@@ -421,7 +425,10 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /* Internal function that manually parses the access path to an object */
+            /**
+             * Internal function that manually parses the access path to an object
+             * @private
+             */
             _getPathObject : function(path, create) {
                 var object = this.values;
                 var i = 0;
@@ -447,13 +454,19 @@ enioka.rules = (function (eniokarules) {
                 return object;
             },
 
-            /* Internal function that extracts last element of the path considered as (generalized) attribute */
+            /**
+             * Internal function that extracts last element of the path considered as (generalized) attribute
+             * @private
+             */
             _getPathAttribute : function(path) {
                 var i = path.lastIndexOf(".");
                 return path.substring(i+1);
             },
 
-            /* Internal function to extract an expression with an offset in a value string */
+            /**
+             *  Internal function to extract an expression with an offset in a value string
+             * @private
+             */
             _getExpressionIndex : function(expression, start) {
                 var i=start+1;
                 var level = 0;
@@ -485,7 +498,10 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /* Internal function to compute a value from an expression, potentially recursive */
+            /**
+             * Internal function to compute a value from an expression, potentially recursive
+             * @private
+             */
             _getExpressionValue : function(expression) {
                 var i=0;
                 var args = new Array();
@@ -557,7 +573,7 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /* 
+            /**
              * General entry point in charge of retrieving a value from a path or an expression
              * The general form of suc expression is either
              * * a quoted litteral (with simple or double quotes)
@@ -632,28 +648,28 @@ enioka.rules = (function (eniokarules) {
             addAttributeValue : function (attribute,value) {
                 return this.values[attribute] = value;
             }
-    };
-    RuleContext = Class.create(RuleContext);
+        };
+        RuleContext = Class.create(RuleContext);
 
-    /*
-     * The Rule class 
-     * 
-     * This class represents the rules objects of the engine. These objects are directly mapped
-     * against their XML source, without (for the moment) compilation to an alternative form
-     * more efficient or convenient for execution.
-     * 
-     * This class is not exposed either to the client API. It is only "seen" from the client
-     * application as an XML object that customizes the behaviour of the engine in a
-     * "declarative" form.
-     * 
-     */
-    var Rule = {
-            /*
-             * @constructor
-             * @param ruleXML : the source code for the rule as an XML object
-             * @param father : the embedding father rule if any (as an object)
-             * @param id : the unique id allocated to identify this rule (integer counter).
-             * 
+        /*
+         * The Rule class
+         *
+         * This class represents the rules objects of the engine. These objects are directly mapped
+         * against their XML source, without (for the moment) compilation to an alternative form
+         * more efficient or convenient for execution.
+         *
+         * This class is not exposed either to the client API. It is only "seen" from the client
+         * application as an XML object that customizes the behaviour of the engine in a
+         * "declarative" form.
+         *
+         */
+        var Rule = {
+            /**
+             * @constructs
+             * @param ruleXML The source code for the rule as an XML object
+             * @param father The embedding father rule if any (as an object)
+             * @param id The unique id allocated to identify this rule (integer counter).
+             *
              * This this takes an XML source code rule and registers "fast" access to the conditions
              * actions and subrules. It does propagate the rule creation to embedded rules as well.
              * See Rule syntax in documentation for further information on rule syntax.
@@ -687,10 +703,10 @@ enioka.rules = (function (eniokarules) {
                 this.father = father;
             },
 
-            /* 
-             * @method hasKey : returns a boolean indicating whether the specified rule has
+            /**
+             * @return A boolean indicating whether the specified rule has
              * an "optimized" condition with this access key condition
-             * @param key : the key (access path) that will be used
+             * @param key The key (access path) that will be used
              */
             hasKey : function(key) {
                 var hasKey = this.ruleXML.hasAttribute(key);
@@ -701,10 +717,10 @@ enioka.rules = (function (eniokarules) {
                 return this.father.hasKey(key);
             },
 
-            /* 
-             * @method getsKey : returns the key value for the optimized key condition to be met
+            /**
+             * @return The key value for the optimized key condition to be met
              * for this rule to fire. For a compiled condition, it MUST be a constant.
-             * @param key : the key (access path) that will be used
+             * @param key The key (access path) that will be used
              */
             getKey : function(key) {
                 var hasKey = this.ruleXML.hasAttribute(key);
@@ -715,10 +731,10 @@ enioka.rules = (function (eniokarules) {
                 return this.father.getKey(key);
             },
 
-            /*
-             * @method matches : checks if a given rule has its preconditions verified in the 
-             * provided context.
-             * @param context : the context in which to evaluate the conditions of the rule
+            /**
+             * @return true if a given rule has its preconditions verified in the
+             * provided context, false otherwise.
+             * @param context The context in which to evaluate the conditions of the rule
              */
             matches : function(context) {
                 // Use cached rule result if possible
@@ -728,10 +744,10 @@ enioka.rules = (function (eniokarules) {
                 // Check father conditions if any
                 if (this.father)
                     if (!this.father.matches(context))
-                    {
-                        context.setRuleEval(this,false);
-                        return false;
-                    }
+                {
+                    context.setRuleEval(this,false);
+                    return false;
+                }
 
                 // Evaluate all conditions as a defaut AND ...
                 for (var i=0; i<this.conditionsXML.length; i++) {
@@ -747,9 +763,9 @@ enioka.rules = (function (eniokarules) {
                 return true;
             },
 
-            /*
-             * @method fires : executes the actions of the specified rule on the provided context
-             * @param context : the context in which to evaluate the conditions of the rule
+            /**
+             * Executes the actions of the specified rule on the provided context
+             * @param context The context in which to evaluate the conditions of the rule
              */
             fires : function(context) {
                 for (var i=0; i<this.actionsXML.length; i++) {
@@ -758,9 +774,9 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /*
-             * @method process : scans and if applicable executes the specified rule on the provided context
-             * @param context : the context on which to apply the rule
+            /**
+             * Scans and if applicable executes the specified rule on the provided context
+             * @param context The context on which to apply the rule
              */
             process : function(context) {
                 if (this.matches(context)) {
@@ -768,8 +784,8 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /* 
-             * @method getPriority : this rule returns the priority of the rule, as its own 
+            /**
+             * @return The priority of the rule, as its own
              * or the priority of its embedding rule if any
              */
             getPriority : function() {
@@ -778,14 +794,14 @@ enioka.rules = (function (eniokarules) {
                 else
                     if (this.father)
                         return this.father.getPriority();
-                    else
-                        return 0;
-            }, 
+                else
+                    return 0;
+            },
 
-            /* 
-             * @method getPrefix : this rule returns the prefeix of the rule, as its own 
+            /**
+             * @return The prefeix of the rule, as its own
              * or the prefix of its embedding rule if any, possibly combined with its own
-             * if the rule own prefix starts with ".". The prefix is used in rules to 
+             * if the rule own prefix starts with ".". The prefix is used in rules to
              * "prefix" access path of deduced facts.
              */
             getPrefix : function() {
@@ -795,7 +811,7 @@ enioka.rules = (function (eniokarules) {
                         if (this.father)
                             return this.father.getPrefix()+prefix;
                         else
-                            return "result"+prefix;                    
+                            return "result"+prefix;
                     } else {
                         return prefix;
                     }
@@ -803,39 +819,40 @@ enioka.rules = (function (eniokarules) {
                 } else
                     if (this.father)
                         return this.father.getPrefix();
-                    else
-                        return "result";
+                else
+                    return "result";
             }
-    };
+        };
 
-    Rule = Class.create(Rule);
+        Rule = Class.create(Rule);
 
-    /*
-     * The RuleIndex class
-     * 
-     * This class provides the core mechanism for efficiently indexing rules by their
-     * use of optimized conditions. When an optimized condition is used of the form key=value
-     * all rules that reference the value found in context for this key can be retrieved 
-     * efficiently without scanning all rules one by one.
-     * 
-     * This class is internal only. 
-     * 
-     * This class coule be further enhanced to provide fast access to candidate rules beyond
-     * optimized conditions only... (ultimately a "xrete" like network would be the solution).
-     * Still this indexing technique as is is independent of worl values, which is a significant
-     * benefit and drastically indexing work for each fact scanned, when they are submitted 
-     * one by one (or internally scanned through the CHOOSE operator).
-     * 
-     */
-    var RuleIndex = {
-            /*
-             * @constructor : does not do a thing...
+        var RuleIndex = {
+            /**
+             * The RuleIndex class
+             * <br/>
+             * <br/>
+             * This class provides the core mechanism for efficiently indexing rules by their
+             * use of optimized conditions. When an optimized condition is used of the form key=value
+             * all rules that reference the value found in context for this key can be retrieved
+             * efficiently without scanning all rules one by one.
+             * <br/>
+             * <br/>
+             * This class is internal only.
+             * <br/>
+             * <br/>
+             * This class coule be further enhanced to provide fast access to candidate rules beyond
+             * optimized conditions only... (ultimately a "xrete" like network would be the solution).
+             * Still this indexing technique as is is independent of worl values, which is a significant
+             * benefit and drastically indexing work for each fact scanned, when they are submitted
+             * one by one (or internally scanned through the CHOOSE operator).
+             *
+             * @constructs Does not do a thing...
              */
             initialize : function() {
             },
 
-            /*
-             * @method addRule : this is the major algorithm to build the index of all rules.
+            /**
+             * This is the major algorithm to build the index of all rules. <br/>
              * The index is a recursive data structure that "points" to the matching rules.
              */
             addRule : function(keys, index, rule) {
@@ -873,7 +890,7 @@ enioka.rules = (function (eniokarules) {
                                 }
                             }
                         }
-                        
+
                         this.indexes[value].addRule(keys, index+1, rule);
                     }
                     else {
@@ -892,13 +909,12 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /*
-             * @method getRules : collect all rules that are a fit to the provided context
-             * @param context : the context to use for checking rules
-             * @param keys : the array of keys that structure the tree
-             * @param index : current index in the keys array to process
-             * @param rules : the array of collected rules where each rule should be added
-             * 
+            /**
+             * Collect all rules that are a fit to the provided context
+             * @param context The context to use for checking rules
+             * @param keys The array of keys that structure the tree
+             * @param index Current index in the keys array to process
+             * @param rules The array of collected rules where each rule should be added
              */
             getRules : function(context, keys, index, rules) {
                 if (index >= keys.length) {
@@ -940,40 +956,38 @@ enioka.rules = (function (eniokarules) {
                 return;
             }
 
-    };
+        };
 
-    RuleIndex = Class.create(RuleIndex);
-    
-    /*
-     * The RuleEngine class
-     * 
-     * This is the core of it... This class provides all access to the rule engine and its
-     * associated functionality. Which is, by the way trivial : apply rules and return the
-     * result created by the rules.
-     * 
-     * It has for the moment two main entry points :
-     * * the constructor to initialize the rule engine with the rules
-     * * the applyRules to apply the rules to a given context
-     * 
-     */
+        RuleIndex = Class.create(RuleIndex);
 
-    var RuleEngine = {
-            /*
-             * @constructor : the constructor is in charge of building all data structures
+        var RuleEngine = {
+            /**
+             * The RuleEngine class
+             * <br/>
+             * <br/>
+             * This is the core of it... This class provides all access to the rule engine and its
+             * associated functionality. Which is, by the way trivial : apply rules and return the
+             * result created by the rules.
+             * <br/>
+             * <br/>
+             * It has for the moment two main entry points :
+             * * the constructor to initialize the rule engine with the rules
+             * * the applyRules to apply the rules to a given context
+             * @constructs The constructor is in charge of building all data structures
              * from the specified rules and then make possible the use of the rules.
-             * @param properties : the elements to customize the engine. For the moment the
-             * following attributes are supported :
-             * * rules : the rules as an XML fragment <RULES> <RULE />* </RULES>
-             * * conditionHandlers : the conition handlers to extend core conditions defined
-             * * actionHandlers : the action handlers to extend core actions defined
-             * * functionHandlers : the function handlers to extend core functions defined
+             * @param properties The elements to customize the engine. For the moment the
+             * following attributes are supported : <br/>
+             * - rules : the rules as an XML fragment <RULES> <RULE />* </RULES>  <br/>
+             * - conditionHandlers : the conition handlers to extend core conditions defined <br/>
+             * - actionHandlers : the action handlers to extend core actions defined <br/>
+             * - functionHandlers : the function handlers to extend core functions defined <br/>
              */
             initialize : function(properties) {
                 if (properties.rulesXML) {
                     this.rulesXML = properties.rulesXML;
                 } else {
                     console.log('Error : no rules specified');
-                    return;    
+                    return;
                 }
 
                 // Initialize all handles for conditions, functions and actions
@@ -1008,17 +1022,17 @@ enioka.rules = (function (eniokarules) {
                     // to select quickly relevant rules
                     var stats = this.keysStats;
                     this.keys.sort(function(keyA,keyB) {
-                        var a = stats[keyA]._count;
-                        var b = stats[keyB]._count;
-                        if (a != b) {
-                            return b-a;
-                        }
-                        else {
-                            a = objectSize(stats[keyA]);
-                            b = objectSize(stats[keyB]);
-                            return b-a;
-                        }
-                    });
+                                       var a = stats[keyA]._count;
+                                       var b = stats[keyB]._count;
+                                       if (a != b) {
+                                           return b-a;
+                                       }
+                                       else {
+                                           a = objectSize(stats[keyA]);
+                                           b = objectSize(stats[keyB]);
+                                           return b-a;
+                                       }
+                                   });
 
                     console.log("Here are the keys found and their selected order : ", this.keys);
                 }
@@ -1033,7 +1047,7 @@ enioka.rules = (function (eniokarules) {
 
 
             getConditionHandler : function (condition) {
-                return this.conditionHandlers[condition.tagName];  
+                return this.conditionHandlers[condition.tagName];
             },
 
             initConditionHandlers : function (properties) {
@@ -1143,12 +1157,12 @@ enioka.rules = (function (eniokarules) {
                         if (properties.conditions.hasOwnProperty(key)) {
                             this.conditionHandlers[key] = properties.conditions[key];
                         }
-                    }                    
+                    }
                 }
             },
 
             getFunctionHandler : function (functionName) {
-                return this.functionHandlers[functionName];  
+                return this.functionHandlers[functionName];
             },
 
             initFunctionHandlers : function (properties) {
@@ -1217,14 +1231,14 @@ enioka.rules = (function (eniokarules) {
                         if (properties.functions.hasOwnProperty(key)) {
                             this.functionHandlers[key] = properties.functions[key];
                         }
-                    }                    
+                    }
                 }
 
             },
 
 
             getActionHandler : function (action) {
-                return this.actionHandlers[action.tagName];  
+                return this.actionHandlers[action.tagName];
             },
 
             initActionHandlers : function (properties) {
@@ -1377,7 +1391,7 @@ enioka.rules = (function (eniokarules) {
                         if (properties.actions.hasOwnProperty(key)) {
                             this.actionHandlers[key] = properties.actions[key];
                         }
-                    }                    
+                    }
                 }
             },
 
@@ -1449,7 +1463,7 @@ enioka.rules = (function (eniokarules) {
                 var rules = new Array();
                 // First use index to get the set of rules candidate for execution
                 this.index.getRules(context, this.keys, 0, rules);
-                
+
                 // Then find the highest priority rule
                 var maxPriority = Number.NEGATIVE_INFINITY;
                 for (var i = 0 ; i < rules.length; i++) {
@@ -1463,7 +1477,7 @@ enioka.rules = (function (eniokarules) {
                 while (maxPriority > Number.NEGATIVE_INFINITY) {
                     var nextPriority = Number.NEGATIVE_INFINITY;
                     console.log("Processing rules of priority " + maxPriority);
-                    
+
                     // All rules will be scanned, but only those with current priority
                     // will be scanned at each step.
                     for (var i = 0 ; i < rules.length; i++) {
@@ -1516,41 +1530,41 @@ enioka.rules = (function (eniokarules) {
                 return context.getValue("$result");
             },
 
-            /*
-             * @method applyRules : the actual (only) entry point to the engine.
-             * @param context : the context to use to apply the rules
-             * @return : the context "result", ie whatever has been created by the rules
+            /**
+             * The actual (only) entry point to the engine.
+             * @param context The context to use to apply the rules
+             * @return The context "result", ie whatever has been created by the rules
              * under the "result" access path, whatever it is.
              */
             applyRules : function (context) {
-                var context = new RuleContext(context);
+                context = new RuleContext(context);
 
                 return this.run(context);
             }
-    };
+        };
 
-    RuleEngine = Class.create(RuleEngine);
-    
-    /*
-     * RuleFact : core wrapper class for input facts when "internal representation is to be used"
-     * 
-     * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
-     * simple : get, set and add attribute value. If they do not support this access process, then
-     * they must be "wrapped" by a wrapper object that will take care to make "as if" the
-     * objects did indeed follow this API.
-     * 
-     * 3 built in wrappers are provided :
-     * * simple "internal" class to represent facts if not specified by client application
-     * * simple "external" class to represent facts provided by client applications, without
-     * knowing exactlty what they are
-     * * simple "result" class to represent info produced by default by the engine and to be
-     * used by client applications as a default to retrieve "results" returned by the engine
-     * 
-     * This class is for internal facts.
-     */
-    var RuleFact = {
-            /*
-             * @constructor
+        RuleEngine = Class.create(RuleEngine);
+
+        /*
+         * RuleFact : core wrapper class for input facts when "internal representation is to be used"
+         *
+         * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
+         * simple : get, set and add attribute value. If they do not support this access process, then
+         * they must be "wrapped" by a wrapper object that will take care to make "as if" the
+         * objects did indeed follow this API.
+         *
+         * 3 built in wrappers are provided :
+         * * simple "internal" class to represent facts if not specified by client application
+         * * simple "external" class to represent facts provided by client applications, without
+         * knowing exactlty what they are
+         * * simple "result" class to represent info produced by default by the engine and to be
+         * used by client applications as a default to retrieve "results" returned by the engine
+         *
+         * This class is for internal facts.
+         */
+        var RuleFact = {
+            /**
+             * @constructs
              */
             initialize : function(properties) {
                 for (var name in properties) {
@@ -1560,29 +1574,29 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /*
-             * @method getAttributeValue : gets the value of the specified attribute 
-             * @param attribute : the name of the attribute
+            /**
+             * Gets the value of the specified attribute
+             * @param attribute The name of the attribute
              */
             getAttributeValue : function (attribute) {
                 return this[attribute];
             },
 
-            /*
-             * @method setAttributeValue : sets the value of the specified attribute with
+            /**
+             * Sets the value of the specified attribute with
              * specified value.
-             * @param attribute : the name of the attribute
-             * @param value : the value to set to the attribute
+             * @param attribute The name of the attribute
+             * @param value The value to set to the attribute
              */
             setAttributeValue : function (attribute,value) {
                 return this[attribute] = value;
             },
 
-            /*
-             * @method setAttributeValue : sets the value of the specified attribute with
+            /**
+             * Sets the value of the specified attribute with
              * specified value.
-             * @param attribute : the name of the attribute
-             * @param value : the value to set to the attribute
+             * @param attribute the name of the attribute
+             * @param value the value to set to the attribute
              */
             addAttributeValue : function (attribute,value) {
                 if (this[attribute]) {
@@ -1605,51 +1619,57 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
-            /*
-             * @method wrapObject : wraps object accessible through this path. If provided, 
+            /**
+             * Wraps object accessible through this path. If provided,
              * this method will either create a wrapper object or return the object itself
              * if this object has no need to be wrapped at all
-             * @param object : the object to wrap
-             * @param path : the current access path to this object
-             * @param context : the context in which access is performed, useful to retrieve 
+             * @param object The object to wrap
+             * @param path The current access path to this object
+             * @param context The context in which access is performed, useful to retrieve
              * initial context information useful to actually access to the object data
-             * @param father : the object from which one tries to access this very object
+             * @param father The object from which one tries to access this very object
              */
             wrapObject: function (object, path, context, father) {
                 return this;
             }
+        };
 
-    };
-
-    RuleFact = Class.create(RuleFact);
+        RuleFact = Class.create(RuleFact);
 
 
-    
-    /*
-     * RuleFact : core wrapper class for input facts when "internal representation is to be used"
-     * 
-     * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
-     * simple : get, set and add attribute value. If they do not support this access process, then
-     * they must be "wrapped" by a wrapper object that will take care to make "as if" the
-     * objects did indeed follow this API.
-     * 
-     * 3 built in wrappers are provided :
-     * * simple "internal" class to represent facts if not specified by client application
-     * * simple "external" class to represent facts provided by client applications, without
-     * knowing exactlty what they are
-     * * simple "result" class to represent info produced by default by the engine and to be
-     * used by client applications as a default to retrieve "results" returned by the engine
-     * 
-     * This class is for default external facts.
-     */
-    var RuleExternalObject = {
-            /*
-             * @constructor
+        var RuleExternalObject = {
+            /**
+             * RuleExternalObject: core wrapper class for input facts when "internal representation is to be used"
+             * <br/>
+             * <br/>
+             * Objects must, to be "accessible" by the rule engine, obey an API, which is rather
+             * simple: get, set and add attribute value. If they do not support this access process, then
+             * they must be "wrapped" by a wrapper object that will take care to make "as if" the
+             * objects did indeed follow this API.
+             * <br/>
+             * <br/>
+             * 3 built-in wrappers are provided: <br/>
+             * - simple "internal" class to represent facts if not specified by client application <br/>
+             * - simple "external" class to represent facts provided by client applications, without
+             * knowing exactlty what they are <br/>
+             * - simple "result" class to represent info produced by default by the engine and to be
+             * used by client applications as a default to retrieve "results" returned by the engine
+             * <br/>
+             * <br/>
+             * This class is for default external facts.
+             * @constructs
+             * @param object
+             * @param path
+             * @param context
+             * @param father
              */
             initialize : function(object, path, context, father) {
                 this.object = object;
             },
 
+            /**
+             *
+             */
             getAttributeValue : function (attribute) {
                 if (this.object) {
                     if (this.object.getAttributeValue) {
@@ -1665,6 +1685,9 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
+            /**
+             *
+             */
             setAttributeValue : function (attribute,value) {
                 if (this.object) {
                     if (this.object.setAttributeValue) {
@@ -1680,6 +1703,9 @@ enioka.rules = (function (eniokarules) {
                 }
             },
 
+            /**
+             *
+             */
             addAttributeValue : function (attribute,value) {
                 if (this.object) {
                     if (this.object.addAttributeValue) {
@@ -1692,29 +1718,33 @@ enioka.rules = (function (eniokarules) {
                     return this.object;
                 }
             }
-    };
+        };
 
-    RuleExternalObject = Class.extend(RuleFact, RuleExternalObject);
+        RuleExternalObject = Class.extend(RuleFact, RuleExternalObject);
 
-    
-    /*
-     * RuleFact : core wrapper class for input facts when "internal representation is to be used"
-     * 
-     * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
-     * simple : get, set and add attribute value. If they do not support this access process, then
-     * they must be "wrapped" by a wrapper object that will take care to make "as if" the
-     * objects did indeed follow this API.
-     * 
-     * 3 built in wrappers are provided :
-     * * simple "internal" class to represent facts if not specified by client application
-     * * simple "external" class to represent facts provided by client applications, without
-     * knowing exactlty what they are
-     * * simple "result" class to represent info produced by default by the engine and to be
-     * used by client applications as a default to retrieve "results" returned by the engine
-     * 
-     * This class is for facts created by the engine.
-     */
-    var RuleResult = {
+
+        /**
+         * @class
+         * RuleFact : core wrapper class for input facts when "internal representation is to be used"
+         * <br/>
+         * <br/>
+         * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
+         * simple : get, set and add attribute value. If they do not support this access process, then
+         * they must be "wrapped" by a wrapper object that will take care to make "as if" the
+         * objects did indeed follow this API.
+         * <br/>
+         * <br/>
+         * 3 built in wrappers are provided :
+         * * simple "internal" class to represent facts if not specified by client application
+         * * simple "external" class to represent facts provided by client applications, without
+         * knowing exactlty what they are
+         * * simple "result" class to represent info produced by default by the engine and to be
+         * used by client applications as a default to retrieve "results" returned by the engine
+         * <br/>
+         * <br/>
+         * This class is for facts created by the engine.
+         */
+        var RuleResult = {
 
             // For backward compatibility temporary
             // to remove when backport is over to new rule engine
@@ -1726,28 +1756,26 @@ enioka.rules = (function (eniokarules) {
                 return [this];
             }
 
-    };
+        };
+        /** @class */
+        RuleResult = Class.extend(RuleFact,
+                                  RuleResult);
 
-    RuleResult = Class.extend(RuleFact, RuleResult);
-    
-    
+        // Eventually expose a (very) limited interface
+        // Rule Engine for starting it all and executing engine
+        eniokarules.RuleEngine = RuleEngine;
+        //    eniokarules.RuleContext = RuleContext;
 
-    // Eventually expose a (very) limited interface
-    // Rule Engine for starting it all and executing engine
-    eniokarules.RuleEngine = RuleEngine;
-    eniokarules.RuleContext = RuleContext;
-    
-    // Three predefined classes as portential wrappers to derive from
-    eniokarules.RuleFact = RuleFact;
-    eniokarules.RuleExternalObject = RuleExternalObject;
-    eniokarules.RuleResult = RuleResult;
-    
-    // And the capability to extend these predefined classes
-    eniokarules.extend = Class.extend;
-    
-    // That's all
-    return eniokarules;
-} 
-(enioka.rules || {}));
+        // Three predefined classes as portential wrappers to derive from
+        eniokarules.RuleFact = RuleFact;
+        eniokarules.RuleExternalObject = RuleExternalObject;
+        eniokarules.RuleResult = RuleResult;
 
+        // And the capability to extend these predefined classes
+        eniokarules.extend = Class.extend;
 
+        // That's all
+        return eniokarules;
+    }
+    (enioka.rules || {})
+);

@@ -30,3 +30,7 @@ made accessible by the context by other rules. One can build rather elaborate ru
 provided mechanisms. Still, the engine is **not designed to perform algorithmic** tasks, and it is a 
 more "clever" use to integrate the engine to an algorithm when this one can be more easily expressed in standard code. 
 The purpose is to express what is **declarative in rules**, and whatever is **procedural in (javascript) code**.
+
+The first release of the tool is very simple and basic, and will evolve with needs, to enhance control capabilities,
+expressiveness of rules, ease of use ... and more elaborate non regression test suite (based on jasmine) and 
+samples.

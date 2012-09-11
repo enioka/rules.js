@@ -1,7 +1,10 @@
 #! /bin/sh
 
-#java -jar jsrun.jar app/run.js -c=conf.js
+# Set here the path to the jsdoc toolkit script and template dir
+jsdocPath="node_modules/jsdoc-toolkit/app/run.js"
+templatePath="node_modules/jsdoc-toolkit/templates/jsdoc/"
 
-#node doc/jsdoc/app/run.js -c=doc/conf.js
+# This script uses the node version of jsdoc-toolkit, you can install it with
+# npm install jsdoc-toolkit
 
-node_modules/jsdoc-toolkit/app/run.js src/Rules.js -t=node_modules/jsdoc-toolkit/templates/jsdoc/ -d="doc"
+$jsdocPath src/Rules.js -t=$templatePath -d="doc"

@@ -1,10 +1,19 @@
 // Copyright 2012 enioka. All rights reserved
+// Distributed under the GNU LESSER GENERAL PUBLIC LICENSE V3
+// Except the Class implementation distributed under the new BSD licence
 // Authors: Jean-Christophe Ferry (jean-christophe.ferry@enioka.com)
 
+/**
+ * @namespace enioka
+ * @see <a href="http://www.enioka.com"/> enioka </a>
+ */
 var enioka = (enioka || {});
 
 /**
- * @namespace enioka rule engine
+ * @namespace enioka.rules
+ * @description enioka javascript rule engine <br/>
+ * Distributed under the GNU LESSER GENERAL PUBLIC LICENSE V3 <br/>
+ * Except the Class implementation distributed under the new BSD licence
  */
 enioka.rules = (
     function (eniokarules) {
@@ -207,7 +216,7 @@ enioka.rules = (
             }
         }
 
-        // Implements the "intersection" between to arrays
+        // Implements the "intersection" between two arrays
         // Used to implement the built in "INTERSECTS" condition type
         // that fires whenever two lists (or elements) have a non
         // empty element in common
@@ -237,6 +246,7 @@ enioka.rules = (
 
         var RuleContext = {
             /**
+             * @class
              * The Rule Context class
              * <br/>
              * <br/>
@@ -574,13 +584,16 @@ enioka.rules = (
             },
 
             /**
-             * General entry point in charge of retrieving a value from a path or an expression
-             * The general form of suc expression is either
-             * * a quoted litteral (with simple or double quotes)
-             * * a string prefixed with a $ sign meaning that what follows (without spaces) is an access path in context
-             * * a string starting with a ( , then it is considered an expression in lisp like syntax with first item
-             * being a function, and following values are parameters. Expressions can be nested at will
-             * * a litteral in any other case
+             * General entry point in charge of retrieving a value from a path or an expression <br/>
+             * <br/>
+             * The general form of such expression is either <br/>
+             * - a quoted litteral (with simple or double quotes) <br/>
+             * - a string prefixed with a $ sign meaning that what follows (without spaces)
+             * is an access path in context
+             * - a string starting with a ( , then it is considered an expression in lisp
+             * like syntax with first item being a function, and following values are parameters.
+             * Expressions can be nested at will <br/>
+             * - a litteral in any other case
              */
             getValue : function(path) {
                 if (!path) return null;
@@ -613,7 +626,7 @@ enioka.rules = (
                 return path;
             },
 
-            /*
+            /**
              * General entry point to set a value to a path
              */
             setValue : function(path,value) {
@@ -623,7 +636,7 @@ enioka.rules = (
                 return object.setAttributeValue(attribute,value);
             },
 
-            /*
+            /**
              * General entry point to add a value to a path
              * It is not the same as previous  it will force specified path to be an array of values
              */
@@ -651,28 +664,24 @@ enioka.rules = (
         };
         RuleContext = Class.create(RuleContext);
 
-        /*
-         * The Rule class
-         *
-         * This class represents the rules objects of the engine. These objects are directly mapped
-         * against their XML source, without (for the moment) compilation to an alternative form
-         * more efficient or convenient for execution.
-         *
-         * This class is not exposed either to the client API. It is only "seen" from the client
-         * application as an XML object that customizes the behaviour of the engine in a
-         * "declarative" form.
-         *
-         */
         var Rule = {
             /**
+             * @class
+             * This class represents the rules objects of the engine. These objects are directly mapped
+             * against their XML source, without (for the moment) compilation to an alternative form
+             * more efficient or convenient for execution. <br/>
+             * <br/>
+             * This class is not exposed either to the client API. It is only "seen" from the client
+             * application as an XML object that customizes the behaviour of the engine in a
+             * "declarative" form. <br/>
+             *
              * @constructs
+             * @description This this takes an XML source code rule and registers "fast" access to the conditions
+             * actions and subrules. It does propagate the rule creation to embedded rules as well.
+             * See Rule syntax in documentation for further information on rule syntax.
              * @param ruleXML The source code for the rule as an XML object
              * @param father The embedding father rule if any (as an object)
              * @param id The unique id allocated to identify this rule (integer counter).
-             *
-             * This this takes an XML source code rule and registers "fast" access to the conditions
-             * actions and subrules. It does propagate the rule creation to embedded rules as well.
-             * See Rule syntax in documentation for further information on rule syntax.
              */
             initialize : function(ruleXML, father, id) {
                 console.log('Creating rule ', id , ruleXML);
@@ -699,7 +708,6 @@ enioka.rules = (
                         this.actionsXML.push(son);
                     }
                 }
-
                 this.father = father;
             },
 
@@ -828,9 +836,7 @@ enioka.rules = (
 
         var RuleIndex = {
             /**
-             * The RuleIndex class
-             * <br/>
-             * <br/>
+             * @class
              * This class provides the core mechanism for efficiently indexing rules by their
              * use of optimized conditions. When an optimized condition is used of the form key=value
              * all rules that reference the value found in context for this key can be retrieved
@@ -846,7 +852,8 @@ enioka.rules = (
              * benefit and drastically indexing work for each fact scanned, when they are submitted
              * one by one (or internally scanned through the CHOOSE operator).
              *
-             * @constructs Does not do a thing...
+             * @constructs
+             * @description Does not do a thing...
              */
             initialize : function() {
             },
@@ -962,18 +969,17 @@ enioka.rules = (
 
         var RuleEngine = {
             /**
-             * The RuleEngine class
-             * <br/>
-             * <br/>
-             * This is the core of it... This class provides all access to the rule engine and its
-             * associated functionality. Which is, by the way trivial : apply rules and return the
+             * @class
+             * This class provides all access to the rule engine and its
+             * associated functionality. Which is, by the way trivial: apply rules and return the
              * result created by the rules.
              * <br/>
              * <br/>
-             * It has for the moment two main entry points :
-             * * the constructor to initialize the rule engine with the rules
-             * * the applyRules to apply the rules to a given context
-             * @constructs The constructor is in charge of building all data structures
+             * It has for the moment two main entry points:<br/>
+             * - the constructor to initialize the rule engine with the rules<br/>
+             * - the applyRules to apply the rules to a given context<br/>
+             * @constructs
+             * @description The constructor is in charge of building all data structures
              * from the specified rules and then make possible the use of the rules.
              * @param properties The elements to customize the engine. For the moment the
              * following attributes are supported : <br/>
@@ -1384,8 +1390,6 @@ enioka.rules = (
                     }
                 };
 
-
-
                 if (properties.actions) {
                     for (var key in properties.actions) {
                         if (properties.actions.hasOwnProperty(key)) {
@@ -1417,11 +1421,11 @@ enioka.rules = (
                     keys.push(attributeName);
                 }
 
-                for (var i=0;i<rulesXML.length;i++) {
+                for (i=0;i<rulesXML.length;i++) {
                     count += this._keyStatsOfRule(rulesXML[i], keys, keysStats);
                 }
 
-                for (var i=0; i< keyCount; i++) {
+                for (i=0; i< keyCount; i++) {
                     var key = keys[keyOffset+i];
                     var value = ruleXML.getAttribute(key);
                     if (!keysStats[key]) {
@@ -1545,25 +1549,24 @@ enioka.rules = (
 
         RuleEngine = Class.create(RuleEngine);
 
-        /*
-         * RuleFact : core wrapper class for input facts when "internal representation is to be used"
-         *
-         * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
-         * simple : get, set and add attribute value. If they do not support this access process, then
-         * they must be "wrapped" by a wrapper object that will take care to make "as if" the
-         * objects did indeed follow this API.
-         *
-         * 3 built in wrappers are provided :
-         * * simple "internal" class to represent facts if not specified by client application
-         * * simple "external" class to represent facts provided by client applications, without
-         * knowing exactlty what they are
-         * * simple "result" class to represent info produced by default by the engine and to be
-         * used by client applications as a default to retrieve "results" returned by the engine
-         *
-         * This class is for internal facts.
-         */
         var RuleFact = {
             /**
+             * @class
+             * Core wrapper class for input facts when "internal representation is to be used".
+             * <br/> <br/>
+             * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
+             * simple: get, set and add attribute value. If they do not support this access process, then
+             * they must be "wrapped" by a wrapper object that will take care to make "as if" the
+             * objects did indeed follow this API.
+             * <br/> <br/>
+             * 3 built in wrappers are provided : <br/>
+             * - simple "internal" class to represent facts if not specified by client application <br/>
+             * - simple "external" class to represent facts provided by client applications, without
+             * knowing exactlty what they are <br/>
+             * - simple "result" class to represent info produced by default by the engine and to be
+             * used by client applications as a default to retrieve "results" returned by the engine
+             * <br/> <br/>
+             * This class is for internal facts.
              * @constructs
              */
             initialize : function(properties) {
@@ -1639,7 +1642,8 @@ enioka.rules = (
 
         var RuleExternalObject = {
             /**
-             * RuleExternalObject: core wrapper class for input facts when "internal representation is to be used"
+             * @class
+             * Core wrapper class for input facts when "internal representation is to be used".
              * <br/>
              * <br/>
              * Objects must, to be "accessible" by the rule engine, obey an API, which is rather
@@ -1725,9 +1729,6 @@ enioka.rules = (
 
         /**
          * @class
-         * RuleFact : core wrapper class for input facts when "internal representation is to be used"
-         * <br/>
-         * <br/>
          * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
          * simple : get, set and add attribute value. If they do not support this access process, then
          * they must be "wrapped" by a wrapper object that will take care to make "as if" the
@@ -1735,10 +1736,10 @@ enioka.rules = (
          * <br/>
          * <br/>
          * 3 built in wrappers are provided :
-         * * simple "internal" class to represent facts if not specified by client application
-         * * simple "external" class to represent facts provided by client applications, without
-         * knowing exactlty what they are
-         * * simple "result" class to represent info produced by default by the engine and to be
+         * - simple "internal" class to represent facts if not specified by client application <br/>
+         * - simple "external" class to represent facts provided by client applications, without
+         * knowing exactlty what they are  <br/>
+         * - simple "result" class to represent info produced by default by the engine and to be
          * used by client applications as a default to retrieve "results" returned by the engine
          * <br/>
          * <br/>
@@ -1757,7 +1758,7 @@ enioka.rules = (
             }
 
         };
-        /** @class */
+
         RuleResult = Class.extend(RuleFact,
                                   RuleResult);
 

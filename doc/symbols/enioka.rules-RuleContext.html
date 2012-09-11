@@ -191,6 +191,8 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
+	<li><a href="../symbols/enioka.html">enioka</a></li>
+	
 	<li><a href="../symbols/enioka.rules.html">enioka.rules</a></li>
 	
 	<li><a href="../symbols/enioka.rules-Rule.html">enioka.rules-Rule</a></li>
@@ -206,8 +208,6 @@ ul.inheritsList
 	<li><a href="../symbols/enioka.rules-RuleIndex.html">enioka.rules-RuleIndex</a></li>
 	
 	<li><a href="../symbols/enioka.rules-RuleResult.html">enioka.rules-RuleResult</a></li>
-	
-	<li><a href="../symbols/RuleResult.html">RuleResult</a></li>
 	
 </ul>
 <hr />
@@ -226,7 +226,24 @@ ul.inheritsList
 				
 				
 			
-				
+				The Rule Context class
+<br/>
+<br/>
+The Rule Context is the way through which the engine holds grip on objects
+on which it performs its reasoning. It holds also the required cache for efficient
+data access.
+<br/>
+<br/>
+This class is not directly exposed in the API. It is used internally by the engine.
+A rule context is allocated for each call of the engine and holds the
+grip on all variables on which the engine will apply rules
+<br/>
+<br/>
+For more advanced uses, one may need to access and manipulate this
+context from the outside. Still, this is a bad idea for the moment
+since this object holds whatever "cache" is needed to  assess
+rule conditions efficiently. Hence direct access to this context should
+not be granted for the moment explicitely.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_Rules.js.html">Rules.js</a>.
@@ -250,11 +267,7 @@ ul.inheritsList
 							<div class="fixedFont">
 								<b><a href="../symbols/enioka.rules-RuleContext.html#constructor">enioka.rules-RuleContext</a></b>(properties)
 							</div>
-							<div class="description">The Rule Context class
-<br/>
-<br/>
-The Rule Context is the way through which the engine holds grip on objects
-on which it performs its reasoning.</div>
+							<div class="description"></div>
 						</td>
 					</tr>
 				</tbody>
@@ -277,6 +290,16 @@ on which it performs its reasoning.</div>
 						</tr>
 					</thead>
 					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">enioka.rules-RuleContext.<b><a href="../symbols/enioka.rules-RuleContext.html#.addValue">addValue</a></b>(path, value)
+								</div>
+								<div class="description">General entry point to add a value to a path
+It is not the same as previous  it will force specified path to be an array of values</div>
+							</td>
+						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -334,12 +357,14 @@ creation of the engine.</div>
 							<td class="nameDescription">
 								<div class="fixedFont">enioka.rules-RuleContext.<b><a href="../symbols/enioka.rules-RuleContext.html#.getValue">getValue</a></b>(path)
 								</div>
-								<div class="description">General entry point in charge of retrieving a value from a path or an expression
-The general form of suc expression is either
-* a quoted litteral (with simple or double quotes)
-* a string prefixed with a $ sign meaning that what follows (without spaces) is an access path in context
-* a string starting with a ( , then it is considered an expression in lisp like syntax with first item
-being a function, and following values are parameters.</div>
+								<div class="description">General entry point in charge of retrieving a value from a path or an expression <br/>
+<br/>
+The general form of such expression is either <br/>
+- a quoted litteral (with simple or double quotes) <br/>
+- a string prefixed with a $ sign meaning that what follows (without spaces)
+is an access path in context
+- a string starting with a ( , then it is considered an expression in lisp
+like syntax with first item being a function, and following values are parameters.</div>
 							</td>
 						</tr>
 					
@@ -367,6 +392,15 @@ being a function, and following values are parameters.</div>
 								<div class="fixedFont">enioka.rules-RuleContext.<b><a href="../symbols/enioka.rules-RuleContext.html#.setRuleEval">setRuleEval</a></b>(rule, match)
 								</div>
 								<div class="description">Sets cached rule's evaluation</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">enioka.rules-RuleContext.<b><a href="../symbols/enioka.rules-RuleContext.html#.setValue">setValue</a></b>(path, value)
+								</div>
+								<div class="description">General entry point to set a value to a path</div>
 							</td>
 						</tr>
 					
@@ -401,24 +435,7 @@ can be used in object traversal as well.</div>
 				</div>
 				
 				<div class="description">
-					The Rule Context class
-<br/>
-<br/>
-The Rule Context is the way through which the engine holds grip on objects
-on which it performs its reasoning. It holds also the required cache for efficient
-data access.
-<br/>
-<br/>
-This class is not directly exposed in the API. It is used internally by the engine.
-A rule context is allocated for each call of the engine and holds the
-grip on all variables on which the engine will apply rules
-<br/>
-<br/>
-For more advanced uses, one may need to access and manipulate this
-context from the outside. Still, this is a bad idea for the moment
-since this object holds whatever "cache" is needed to  assess
-rule conditions efficiently. Hence direct access to this context should
-not be granted for the moment explicitely.
+					
 					
 				</div>
 				
@@ -462,6 +479,49 @@ If the object is actually flat, it will be wrapped by a built in wrapper, <a hre
 				<div class="sectionTitle">
 					Method Detail
 				</div>
+				
+					<a name=".addValue"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">enioka.rules-RuleContext.</span><b>addValue</b>(path, value)
+					
+					</div>
+					<div class="description">
+						General entry point to add a value to a path
+It is not the same as previous  it will force specified path to be an array of values
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>path</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>value</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
 				
 					<a name=".checkCondition"> </a>
 					<div class="fixedFont">&lt;static&gt; 
@@ -666,13 +726,16 @@ Other actions make possible some control over the execution of the engine
 					
 					</div>
 					<div class="description">
-						General entry point in charge of retrieving a value from a path or an expression
-The general form of suc expression is either
-* a quoted litteral (with simple or double quotes)
-* a string prefixed with a $ sign meaning that what follows (without spaces) is an access path in context
-* a string starting with a ( , then it is considered an expression in lisp like syntax with first item
-being a function, and following values are parameters. Expressions can be nested at will
-* a litteral in any other case
+						General entry point in charge of retrieving a value from a path or an expression <br/>
+<br/>
+The general form of such expression is either <br/>
+- a quoted litteral (with simple or double quotes) <br/>
+- a string prefixed with a $ sign meaning that what follows (without spaces)
+is an access path in context
+- a string starting with a ( , then it is considered an expression in lisp
+like syntax with first item being a function, and following values are parameters.
+Expressions can be nested at will <br/>
+- a litteral in any other case
 						
 						
 					</div>
@@ -814,6 +877,48 @@ being a function, and following values are parameters. Expressions can be nested
 
 					<hr />
 				
+					<a name=".setValue"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">enioka.rules-RuleContext.</span><b>setValue</b>(path, value)
+					
+					</div>
+					<div class="description">
+						General entry point to set a value to a path
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>path</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>value</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".wrapObject"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -877,7 +982,7 @@ of the application, whatever they are and without modification
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Sep 10 2012 16:21:05 GMT+0200 (CEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Sep 11 2012 09:42:32 GMT+0200 (CEST)
 		</div>
 	</body>
 </html>

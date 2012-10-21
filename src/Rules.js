@@ -27,6 +27,49 @@ enioka.rules = (
          Copyright (c) 2006, 2007, 2008, Alex Arnell <alex@twologic.com>
          Licensed under the new BSD License. See end of file for full license terms.
          */
+    	
+    	function info_debug(text,object) {
+    		if (eniokarules.info_debug) {
+    			eniokarules.info_debug(text,object);
+    		} else {
+    			console.log(text,object);
+    		}
+    	}
+    	function info_warn(text,object) {
+    		if (eniokarules.info_warn) {
+    			eniokarules.info_warn(text,object);
+    		} else {
+    			console.log(text,object);
+    		}
+    	}
+    	function info_error(text,object) {
+    		if (eniokarules.info_error) {
+    			eniokarules.info_error(text,object);
+    		} else {
+    			console.log(text,object);
+    		}
+    	}
+    	function user_debug(text,object) {
+    		if (eniokarules.user_debug) {
+    			eniokarules.user_debug(text,object);
+    		} else {
+    			console.log(text,object);
+    		}
+    	}
+    	function user_warn(text,object) {
+    		if (eniokarules.user_warn) {
+    			eniokarules.user_warn(text,object);
+    		} else {
+    			console.log(text,object);
+    		}
+    	}
+    	function user_error(text,object) {
+    		if (eniokarules.user_error) {
+    			eniokarules.user_error(text,object);
+    		} else {
+    			console.log(text,object);
+    		}
+    	}
 
         var Class = (function() {
                          var __extending = {};
@@ -164,7 +207,6 @@ enioka.rules = (
         // Very dirty utility to look for specified children in path
         // Should be replaced by more efficient cross browser/javascript runtine XML XPATH like utility
         function getMatchingTags(data, path, array) {
-            //console.log('Looking for path = ' , path, ' @' , data.tagName);
             if (path === "") {
                 return;
             }
@@ -196,7 +238,6 @@ enioka.rules = (
                 } else {
                     tag = path;
                 }
-                //console.log('Looking for tag = ' + tag);
                 children = data.childNodes;
                 for (i = 0; i < children.length; i++) {
                     son = children.item(i);
@@ -325,7 +366,7 @@ enioka.rules = (
                 if (conditionHandler) {
                     return conditionHandler(this,condition);
                 } else {
-                    console.log('Unhandled condition :', condition);
+                    info_debug('Unhandled condition :', condition);
                     return false;
                 }
             },
@@ -353,7 +394,7 @@ enioka.rules = (
                 if (actionHandler) {
                     return actionHandler(this,action, rule);
                 } else {
-                    console.log('Unhandled action :', action);
+                    info_debug('Unhandled action :', action);
                     return null;
                 }
             },
@@ -500,7 +541,7 @@ enioka.rules = (
                     i++;
                 }
                 if ((i > expression.length) || (expression.charAt(i) != ')') || inString) {
-                    console.log("Syntax error in expression ", expression);
+                    info_debug("Syntax error in expression ", expression);
                     return -1;
                 }
                 else {
@@ -548,7 +589,7 @@ enioka.rules = (
                 }
 
                 if (inString) {
-                    console.log("Error: syntax error in expression in string : ", expression);
+                    info_debug("Error: syntax error in expression in string : ", expression);
                     return null;
                 }
 
@@ -561,7 +602,7 @@ enioka.rules = (
                 }
 
                 if (values.length == 0) {
-                    console.log("Error: syntax error in expression : ", expression);
+                    info_debug("Error: syntax error in expression : ", expression);
                     return null;
                 }
                 var funcall = values[0];
@@ -578,7 +619,7 @@ enioka.rules = (
                     return functionHandler(this,values);
                 }
                 else {
-                    console.log("Error: unknown function in expression : ", args[0], values[0], expression);
+                    info_debug("Error: unknown function in expression : ", args[0], values[0], expression);
                     return null;
                 }
             },
@@ -616,7 +657,7 @@ enioka.rules = (
                 if (path.charAt(0) == '(') {
                     var index = this._getExpressionIndex(path, 0);
                     if (index == -1) {
-                        console.log("Syntax error in expression ", path);
+                        info_debug("Syntax error in expression ", path);
                         return null;
                     }
                     else {
@@ -684,7 +725,7 @@ enioka.rules = (
              * @param id The unique id allocated to identify this rule (integer counter).
              */
             initialize : function(ruleXML, father, id) {
-                console.log('Creating rule ', id , ruleXML);
+                info_debug('Creating rule ', id , ruleXML);
                 this.id = id;
                 this.ruleXML = ruleXML;
                 this.conditionsXML = new Array();
@@ -989,10 +1030,23 @@ enioka.rules = (
              * - functionHandlers : the function handlers to extend core functions defined <br/>
              */
             initialize : function(properties) {
+            	if (properties) {
+            		if (properties.info_debug || properties.warn_debug || properties.error_debug ||
+            				properties.info_user || properties.warn_user || properties.error_user ) {
+            			eniokarules.info_debug = properties.info_debug;
+            			eniokarules.warn_debug = properties.warn_debug;
+            			eniokarules.error_debug = properties.error_debug;
+
+            			eniokarules.info_user = properties.info_user;
+            			eniokarules.warn_user = properties.warn_user;
+            			eniokarules.error_user = properties.error_user;
+            		}
+            	}
+            	
                 if (properties.rulesXML) {
                     this.rulesXML = properties.rulesXML;
                 } else {
-                    console.log('Error : no rules specified');
+                    info_debug('Error : no rules specified');
                     return;
                 }
 
@@ -1040,7 +1094,7 @@ enioka.rules = (
                                        }
                                    });
 
-                    console.log("Here are the keys found and their selected order : ", this.keys);
+                    info_debug("Here are the keys found and their selected order : ", this.keys);
                 }
 
                 // Once the keys array defined, one can build the index of the rules
@@ -1048,7 +1102,7 @@ enioka.rules = (
                     this._indexRule(this.rulesXML[i], null);
                 }
 
-                console.log("The engine has compiled all rules and indexed them against used keys : ", this);
+                info_debug("The engine has compiled all rules and indexed them against used keys : ", this);
             },
 
 
@@ -1178,7 +1232,7 @@ enioka.rules = (
                     for (var i = 1; i < args.length; i++) {
                         result = result + args[i];
                     }
-                    console.log("PRINT [" + result + "]");
+                    info_debug("PRINT [" + result + "]");
                     return result;
                 };
 
@@ -1253,7 +1307,7 @@ enioka.rules = (
                     if (action.tagName == "LOG") {
                         var message = context.getValue(action.getAttribute("message"));
                         if (message) {
-                            console.log(message);
+                            info_debug(message);
                         }
                     }
                 };
@@ -1371,7 +1425,7 @@ enioka.rules = (
                                         engine.run(context);
                                     }
                                 } else {
-                                    console.log("Warning : choice is singleton , not a list..." + value);
+                                    info_debug("Warning : choice is singleton , not a list..." + value);
                                     var binding = value;
                                     context.setValue(attributePath, binding);
                                     var actions = action.childNodes;
@@ -1384,7 +1438,7 @@ enioka.rules = (
                                     }
                                 }
                             } else {
-                                console.log ("Warning : no choice available for : " + attributePath);
+                                info_debug("Warning : no choice available for : " + attributePath);
                             }
                         }
                     }
@@ -1414,7 +1468,7 @@ enioka.rules = (
                     if (attributeName == "priority") continue;
                     if (attributeName == "prefix") continue;
                     if (keys.indexOf(attributeName) != -1) {
-                        console.log("Using a key condition twice in a rule hierarchy is not supported :" + attributeName, keys, keyOffset);
+                        info_debug("Using a key condition twice in a rule hierarchy is not supported :" + attributeName, keys, keyOffset);
                         continue;
                     }
                     keyCount++;
@@ -1480,7 +1534,7 @@ enioka.rules = (
                 // All priorities will be scanned in descending order (unless restart)
                 while (maxPriority > Number.NEGATIVE_INFINITY) {
                     var nextPriority = Number.NEGATIVE_INFINITY;
-                    console.log("Processing rules of priority " + maxPriority);
+                    info_debug("Processing rules of priority " + maxPriority);
 
                     // All rules will be scanned, but only those with current priority
                     // will be scanned at each step.
@@ -1607,8 +1661,8 @@ enioka.rules = (
                         this[attribute].push(value);
                     }
                     else {
-                        console.log('Error : attribute is not a array : should not access it with add', this);
-                        console.log('Warning : attribute converted to array');
+                        info_debug('Error : attribute is not a array : should not access it with add', this);
+                        info_debug('Warning : attribute converted to array');
                         var tab = new Array();
                         tab.push(this[attribute]);
                         tab.push(value);
@@ -1680,7 +1734,7 @@ enioka.rules = (
                         return this.object.getAttributeValue(attribute);
                     }
                     else {
-                        console.log('This object is not accessible by the rule engine ' , this.object);
+                        info_debug('This object is not accessible by the rule engine ' , this.object);
                         return null;
                     }
                 }
@@ -1698,7 +1752,7 @@ enioka.rules = (
                         return this.object.setAttributeValue(attribute,value);
                     }
                     else {
-                        console.log('This object cannot be modified by the rule engine ' , this.object);
+                        info_debug('This object cannot be modified by the rule engine ' , this.object);
                         return null;
                     }
                 }
@@ -1715,7 +1769,7 @@ enioka.rules = (
                     if (this.object.addAttributeValue) {
                         return this.object.addAttributeValue(attribute,value);
                     } else {
-                        console.log('This object cannot be modified by the rule engine ' , this.object);
+                        info_debug('This object cannot be modified by the rule engine ' , this.object);
                         return null;
                     }
                 } else {
@@ -1765,7 +1819,9 @@ enioka.rules = (
         // Eventually expose a (very) limited interface
         // Rule Engine for starting it all and executing engine
         eniokarules.RuleEngine = RuleEngine;
-        //    eniokarules.RuleContext = RuleContext;
+        
+        // Exposed only for tests purposes
+        eniokarules.RuleContext = RuleContext;
 
         // Three predefined classes as portential wrappers to derive from
         eniokarules.RuleFact = RuleFact;

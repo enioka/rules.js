@@ -1348,6 +1348,53 @@ enioka.rules = (
                 };
                 this.actionHandlers.SET = assignHandler;
                 this.actionHandlers.ADD = assignHandler;
+                
+                var textAssignHandler = function (context, action, rule) {
+                    if ((action.tagName == "SET_TEXT") || (action.tagName == "ADD_TEXT")) {
+                        var path = context.getValue(action.getAttribute("path"));
+                        if (path){
+                            var prefix = null;
+                            if (action.hasAttribute("prefix")) {
+                                prefix = action.getAttribute("prefix");
+                                if (prefix.charAt(0)=='.') {
+                                    prefix = rule.getPrefix() + prefix;
+                                }
+                            } else {
+                                prefix = rule.getPrefix();
+                            }
+                            prefix=prefix+".";
+                            path = prefix + path;
+                            var value = null;
+                            if (action.childNodes) {
+                                for (var i =0 ; i< action.childNodes.length; i++) {
+                                    var child = action.childNodes[i];
+                                    if (child.nodeType == child.CDATA_SECTION_NODE) {
+                                        if (value == null) value = child.data;
+                                        else value = value + child.data;
+                                    }
+                                }
+                                if (value == null)
+                                for (var i =0 ; i< action.childNodes.length; i++) {
+                                    var child = action.childNodes[i];
+                                    if (child.nodeType == child.TEXT_NODE) {
+                                        if (value == null) value = child.data;
+                                        else value = value + child.data;
+                                    }
+                                }
+                            }
+                            if (value) {
+                                if (action.tagName == "SET_TEXT") {
+                                    context.setValue(path,value);
+                                }
+                                else {
+                                    context.addValue(path,value);
+                                }
+                            }
+                        }
+                    }
+                };
+                this.actionHandlers.SET_TEXT = textAssignHandler;
+                this.actionHandlers.ADD_TEXT = textAssignHandler;
 
                 var dassignHandler = function (context, action, rule) {
                     if ((action.tagName == "DSET") || (action.tagName == "DADD")) {

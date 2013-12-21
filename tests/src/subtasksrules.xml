@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RULES>
+  <RULE task="test1">
+	<THEN>
+	  <LOG message="test1 rule fired :" />
+      <LOG message="(catenate 'hop ' $object)" />
+      <LOG message="test1 rule end fired :" />
+      <ADD test1="$object" />
+	</THEN>
+  </RULE>
+  <RULE task="doTest" priority="20">
+    <THEN>
+      <LOG message="object1 rule fired" />
+      <ADD objects="object1" />
+    </THEN>
+  </RULE>
+  <RULE task="doTest" priority="20">
+    <THEN>
+      <LOG message="object2 rule fired" />
+      <ADD objects="object2" />
+    </THEN>
+  </RULE>
+  <RULE task="doTest" priority="10">
+    <THEN>
+      <LOG message="main rule fired" />
+      <CHOOSE object="$result.objects" >
+        <SET prefix="" task="test1" />
+        <SET prefix="" arg="test1-value" />
+      </CHOOSE>
+    </THEN>
+  </RULE>
+</RULES>

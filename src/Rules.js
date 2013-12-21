@@ -700,7 +700,17 @@ enioka.rules = (
             },
 
             addAttributeValue : function (attribute,value) {
-                return this.values[attribute] = value;
+                if (this.values[attribute] && Array.isArray(this.values[attribute])) {
+                    return this.values[attribute].push(value);
+                } else {
+                    if (this.values[attribute]) {
+                        this.values[attribute] = [this.values[attribute], value];
+                        return this.values[attribute];
+                    } else {
+                        this.values[attribute] = [value];
+                        return this.values[attribute];
+                    }
+                }
             }
         };
         RuleContext = Class.create(RuleContext);
@@ -725,7 +735,7 @@ enioka.rules = (
              * @param id The unique id allocated to identify this rule (integer counter).
              */
             initialize : function(ruleXML, father, id) {
-                info_debug('Creating rule ', id , ruleXML);
+//                info_debug('Creating rule ', id , ruleXML);
                 this.id = id;
                 this.ruleXML = ruleXML;
                 this.conditionsXML = new Array();
@@ -839,7 +849,7 @@ enioka.rules = (
              */
             getPriority : function() {
                 if (this.ruleXML.hasAttribute("priority"))
-                    return this.ruleXML.getAttribute("priority");
+                    return parseInt(this.ruleXML.getAttribute("priority"));
                 else
                     if (this.father)
                         return this.father.getPriority();
@@ -1296,18 +1306,41 @@ enioka.rules = (
 
             },
 
-
             getActionHandler : function (action) {
                 return this.actionHandlers[action.tagName];
+            },
+            
+            // TODO here : make possible to use full XML capability
+            // for nice (HTML) message and possible susbtitution in ${} syntax
+            // of context variables....
+            _getMessage : function (context, action) {
+                return context.getValue(action.getAttribute("message"));
             },
 
             initActionHandlers : function (properties) {
                 this.actionHandlers = new Object();
                 this.actionHandlers.LOG = function(context, action, rule) {
                     if (action.tagName == "LOG") {
-                        var message = context.getValue(action.getAttribute("message"));
+                        var message = context.getEngine()._getMessage(context, action) ;
+                        var level = context.getValue(action.getAttribute("level"));
+                        if ((level == null) || (level = "")) level="debug";
                         if (message) {
-                            info_debug(message);
+                            if (level == "debug") info_debug(message);
+                            if (level == "warn") info_warn(message);
+                            if (level == "error") info_error(message);
+                        }
+                    }
+                };
+                
+                this.actionHandlers.LOG_USER = function(context, action, rule) {
+                    if (action.tagName == "LOG_USER") {
+                        var message = context.getEngine()._getMessage(context, action) ;
+                        var level = context.getValue(action.getAttribute("level"));
+                        if ((level == null) || (level = "")) level="debug";
+                        if (message) {
+                            if (level == "debug") user_debug(message);
+                            if (level == "warn") user_warn(message);
+                            if (level == "error") user_error(message);
                         }
                     }
                 };
@@ -1324,7 +1357,9 @@ enioka.rules = (
                         } else {
                             prefix = rule.getPrefix();
                         }
-                        prefix=prefix+".";
+                        if (prefix !="") {
+                            prefix=prefix+".";
+                        }
                         for (var i=0; i<attributes.length;i++)  {
                             var attribute = attributes.item(i);
                             var attributePath = attribute.nodeName;
@@ -1362,7 +1397,9 @@ enioka.rules = (
                             } else {
                                 prefix = rule.getPrefix();
                             }
-                            prefix=prefix+".";
+                            if (prefix !="") {
+                                prefix=prefix+".";
+                            }
                             path = prefix + path;
                             var value = null;
                             if (action.childNodes) {
@@ -1409,7 +1446,9 @@ enioka.rules = (
                             } else {
                                 prefix = rule.getPrefix();
                             }
-                            prefix=prefix+".";
+                            if (prefix !="") {
+                                prefix=prefix+".";
+                            }
                             path = prefix + path;
                             var value = context.getValue(action.getAttribute("value"));
                             if (value) {
@@ -1581,7 +1620,7 @@ enioka.rules = (
                 // All priorities will be scanned in descending order (unless restart)
                 while (maxPriority > Number.NEGATIVE_INFINITY) {
                     var nextPriority = Number.NEGATIVE_INFINITY;
-                    info_debug("Processing rules of priority " + maxPriority);
+//                    info_debug("Processing rules of priority " + maxPriority);
 
                     // All rules will be scanned, but only those with current priority
                     // will be scanned at each step.

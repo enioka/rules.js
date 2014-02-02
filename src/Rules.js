@@ -1192,6 +1192,12 @@ enioka.rules = (
                         return value1 == value2;
                     }
                 };
+                this.conditionHandlers.ISNULL = function(context,condition) {
+                    if (condition.tagName == "ISNULL") {
+                        var value = context.getValue(condition.getAttribute("value"));
+                        return ((typeof(value) == "undefined") || (value == null));
+                    }
+                };
                 this.conditionHandlers.INTERSECTS = function(context,condition) {
                     if (condition.tagName == "INTERSECTS") {
                         var value1 = context.getValue(condition.getAttribute("value1"));

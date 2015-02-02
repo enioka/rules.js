@@ -522,7 +522,7 @@ enioka.rules = (
                 var i=start+1;
                 var level = 0;
                 var inString = false;
-                while ((i < expression.length) && ((expression.charAt(i) != ')') || (level > 0))) {
+                while ((i < expression.length) && ((expression.charAt(i) != ')') || inString || (level > 0))) {
                     if ((expression.charAt(i) =='"') || (expression.charAt(i) =='\'')) {
                         inString  = !inString;
                         i++;
@@ -540,7 +540,7 @@ enioka.rules = (
                     }
                     i++;
                 }
-                if ((i > expression.length) || (expression.charAt(i) != ')') || inString) {
+                if ((i > expression.length) || (expression.charAt(i) != ')') || inString || (level > 0)) {
                     info_debug("Syntax error in expression ", expression);
                     return -1;
                 }

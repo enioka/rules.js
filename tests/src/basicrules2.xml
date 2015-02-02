@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RULES>
-  <RULE priority="18" mycondition="yes" >
+  <RULE priority="18" mycondition="test1" >
 	<THEN>
-	  <LOG message="TCO RULE fired" />
+	  <LOG message="RULE with test1 condition fired" />
       <SET v="myvalue" />
 	</THEN>
+  </RULE>
+  
+  <RULE priority="18" mycondition="test2" >
+   <THEN>
+     <LOG message="RULE with test2 condition fired" />
+      <SET v="(+ 2 3)" />
+   </THEN>
+  </RULE>
+
+  <RULE priority="18" mycondition="test3" >
+   <THEN>
+     <LOG message="RULE with test3 condition fired" />
+      <SET v="(catenate 'hop ' 'test3')" />
+   </THEN>
+  </RULE>
+
+  <RULE priority="18" mycondition="test4" >
+   <THEN>
+     <LOG message="RULE with test4 condition fired" />
+      <SET v="(catenate '(' 'hop test4' ')' )" />
+   </THEN>
+  </RULE>
+
+  <RULE priority="18" mycondition="test5" >
+   <THEN>
+     <LOG message="RULE with test4 condition fired" />
+      <SET v="(catenate '(' 'hop test5' )" />
+   </THEN>
   </RULE>
 </RULES>

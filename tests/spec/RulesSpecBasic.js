@@ -80,7 +80,7 @@ function describeTests (data, textStatus, transport) {
             it('Gets the most basic value', function () {
                    var rules = getRulesFromXML(data);
                    var engine = new RuleEngine({rulesXML : rules});
-                   var context = new RuleContext({mycondition:"yes"});
+                   var context = new RuleContext({mycondition:"test1"});
 
                    var result = engine.run(context);
 
@@ -91,7 +91,64 @@ function describeTests (data, textStatus, transport) {
                    console.log(result);
                });
 
+            it('Gets a computed value with basic expression with a plus function', function () {
+                   var rules = getRulesFromXML(data);
+                   var engine = new RuleEngine({rulesXML : rules});
+                   var context = new RuleContext({mycondition:"test2"});
 
+                   var result = engine.run(context);
+
+                   expect(result).not.toBeNull(null);
+                   expect(result).toHaveAttribute({key:"v",
+                                                   value:5});
+
+                   console.log(result);
+               });
+
+
+            it('Gets a computed value with basic expression with a catenate function', function () {
+                   var rules = getRulesFromXML(data);
+                   var engine = new RuleEngine({rulesXML : rules});
+                   var context = new RuleContext({mycondition:"test3"});
+
+                   var result = engine.run(context);
+
+                   expect(result).not.toBeNull(null);
+                   expect(result).toHaveAttribute({key:"v",
+                                                   value:"hop test3"});
+
+                   console.log(result);
+               });
+
+
+            it('Gets a computed value with basic expression with two balanced parenthesis in a string', function () {
+                   var rules = getRulesFromXML(data);
+                   var engine = new RuleEngine({rulesXML : rules});
+                   var context = new RuleContext({mycondition:"test4"});
+
+                   var result = engine.run(context);
+
+                   expect(result).not.toBeNull(null);
+                   expect(result).toHaveAttribute({key:"v",
+                                                   value:"(hop test4)"});
+
+                   console.log(result);
+               });
+
+
+            it('Gets a computed value with basic expression with a single parenthesis in a string', function () {
+                   var rules = getRulesFromXML(data);
+                   var engine = new RuleEngine({rulesXML : rules});
+                   var context = new RuleContext({mycondition:"test5"});
+
+                   var result = engine.run(context);
+
+                   expect(result).not.toBeNull(null);
+                   expect(result).toHaveAttribute({key:"v",
+                                                   value:"(hop test5"});
+
+                   console.log(result);
+               });
 
         });
 }

@@ -27,49 +27,49 @@ enioka.rules = (
          Copyright (c) 2006, 2007, 2008, Alex Arnell <alex@twologic.com>
          Licensed under the new BSD License. See end of file for full license terms.
          */
-    	
-    	function info_debug(text,object) {
-    		if (eniokarules.info_debug) {
-    			eniokarules.info_debug(text,object);
-    		} else {
-    			console.log(text,object);
-    		}
-    	}
-    	function info_warn(text,object) {
-    		if (eniokarules.info_warn) {
-    			eniokarules.info_warn(text,object);
-    		} else {
-    			console.log(text,object);
-    		}
-    	}
-    	function info_error(text,object) {
-    		if (eniokarules.info_error) {
-    			eniokarules.info_error(text,object);
-    		} else {
-    			console.log(text,object);
-    		}
-    	}
-    	function user_debug(text,object) {
-    		if (eniokarules.user_debug) {
-    			eniokarules.user_debug(text,object);
-    		} else {
-    			console.log(text,object);
-    		}
-    	}
-    	function user_warn(text,object) {
-    		if (eniokarules.user_warn) {
-    			eniokarules.user_warn(text,object);
-    		} else {
-    			console.log(text,object);
-    		}
-    	}
-    	function user_error(text,object) {
-    		if (eniokarules.user_error) {
-    			eniokarules.user_error(text,object);
-    		} else {
-    			console.log(text,object);
-    		}
-    	}
+        
+        function info_debug(text,object) {
+            if (eniokarules.info_debug) {
+                eniokarules.info_debug(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function info_warn(text,object) {
+            if (eniokarules.info_warn) {
+                eniokarules.info_warn(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function info_error(text,object) {
+            if (eniokarules.info_error) {
+                eniokarules.info_error(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function user_debug(text,object) {
+            if (eniokarules.user_debug) {
+                eniokarules.user_debug(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function user_warn(text,object) {
+            if (eniokarules.user_warn) {
+                eniokarules.user_warn(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function user_error(text,object) {
+            if (eniokarules.user_error) {
+                eniokarules.user_error(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
 
         var Class = (function() {
                          var __extending = {};
@@ -978,7 +978,16 @@ enioka.rules = (
                 if (index >= keys.length) {
                     if (this.rules) {
                         for (var i=0; i< this.rules.length; i++) {
-                            rules.push(this.rules[i]);
+                            var rule = this.rules[i];
+                            var found = false;
+                            for (var j=0; j<rules.length; j++) {
+                                if (rules[j]==rule) {
+                                    found = true;
+                                }
+                            }
+                            if (!found) {
+                                rules.push(rule);
+                            }
                         }
                     }
                     return;
@@ -1040,19 +1049,19 @@ enioka.rules = (
              * - functionHandlers : the function handlers to extend core functions defined <br/>
              */
             initialize : function(properties) {
-            	if (properties) {
-            		if (properties.info_debug || properties.warn_debug || properties.error_debug ||
-            				properties.info_user || properties.warn_user || properties.error_user ) {
-            			eniokarules.info_debug = properties.info_debug;
-            			eniokarules.warn_debug = properties.warn_debug;
-            			eniokarules.error_debug = properties.error_debug;
+                if (properties) {
+                    if (properties.info_debug || properties.warn_debug || properties.error_debug ||
+                            properties.info_user || properties.warn_user || properties.error_user ) {
+                        eniokarules.info_debug = properties.info_debug;
+                        eniokarules.warn_debug = properties.warn_debug;
+                        eniokarules.error_debug = properties.error_debug;
 
-            			eniokarules.info_user = properties.info_user;
-            			eniokarules.warn_user = properties.warn_user;
-            			eniokarules.error_user = properties.error_user;
-            		}
-            	}
-            	
+                        eniokarules.info_user = properties.info_user;
+                        eniokarules.warn_user = properties.warn_user;
+                        eniokarules.error_user = properties.error_user;
+                    }
+                }
+                
                 if (properties.rulesXML) {
                     this.rulesXML = properties.rulesXML;
                 } else {
@@ -1315,7 +1324,7 @@ enioka.rules = (
             getActionHandler : function (action) {
                 return this.actionHandlers[action.tagName];
             },
-            
+
             // TODO here : make possible to use full XML capability
             // for nice (HTML) message and possible susbtitution in ${} syntax
             // of context variables....
@@ -1337,7 +1346,7 @@ enioka.rules = (
                         }
                     }
                 };
-                
+
                 this.actionHandlers.LOG_USER = function(context, action, rule) {
                     if (action.tagName == "LOG_USER") {
                         var message = context.getEngine()._getMessage(context, action) ;
@@ -1389,7 +1398,7 @@ enioka.rules = (
                 };
                 this.actionHandlers.SET = assignHandler;
                 this.actionHandlers.ADD = assignHandler;
-                
+
                 var textAssignHandler = function (context, action, rule) {
                     if ((action.tagName == "SET_TEXT") || (action.tagName == "ADD_TEXT")) {
                         var path = context.getValue(action.getAttribute("path"));
@@ -1605,12 +1614,64 @@ enioka.rules = (
                     this._indexRule(rule.rulesXML[i], rule);
                 }
             },
+            
+            nSpaces : function(i) {
+                var nSpaces="";
+                for (var j=0;j<i;j++) {
+                    nSpaces=nSpaces + "   ";
+                }
+                return nSpaces;
+            },
+            
+            rulesListString : function (rules) {
+                var list = "["
+                if (rules) {
+                    for (var i=0;i<rules.length;i++) {
+                        if (i>0) list=list+","; 
+                        list=list+rules[i].id;
+                    }
+                }
+                list = list+"]";
+                return list;
+            },
+            
+            printRulesOverview : function (rules) {
+                console.log('Rules : ' + this.rulesListString(rules));
+            },
+            
+            printRulesDetail : function (rules) {
+                if (rules) {
+                    for (var i=0;i<rules.length;i++) {
+                        console.log(' - rule : ', rules[i] );
+                    }
+                }
+            },
+            
+            printRulesIndex : function(index,i) {
+                if (index) {
+                    var nSpaces = this.nSpaces(i);
+                    console.log(nSpaces + "key="+index.key+ ", rules="+this.rulesListString(index.rules),index);
+                    if (index.indexes){
+                        for (var name in index.indexes) {
+                            if (index.indexes.hasOwnProperty(name)) {
+                                console.log(nSpaces + "..value="+name);
+                                this.printRulesIndex(index.indexes[name],i+1);
+                            }
+                        }   
+                    }
+                    if (index.noKey) {
+                        console.log(nSpaces + "..value=nokey");
+                        this.printRulesIndex(index.noKey,i+1);
+                    }
+                }
+            },
 
             // For the moment, only the internal run function of the engine
             // but may be an entry point for more advanced uses eventually
             run : function (context) {
                 context.setEngine(this);
                 var rules = new Array();
+                
                 // First use index to get the set of rules candidate for execution
                 this.index.getRules(context, this.keys, 0, rules);
 
@@ -1911,7 +1972,7 @@ enioka.rules = (
         // Eventually expose a (very) limited interface
         // Rule Engine for starting it all and executing engine
         eniokarules.RuleEngine = RuleEngine;
-        
+
         // Exposed only for tests purposes
         eniokarules.RuleContext = RuleContext;
 

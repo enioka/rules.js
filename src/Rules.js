@@ -1178,7 +1178,7 @@ enioka.rules = (
                             var attributePath = attribute.nodeName;
                             var value = context.getValue("$"+attributePath);
                             if (value) {
-                                var attributeValue = action.getAttribute(attributePath);
+                                var attributeValue = condition.getAttribute(attributePath);
                                 var patternvalue = context.getValue(attributeValue);
                                 if (patternvalue) {
                                     var pattern = new RegExp(patternvalue,"gi");

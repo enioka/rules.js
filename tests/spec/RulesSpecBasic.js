@@ -45,7 +45,7 @@ function deepCompare (x, y) {
     if ( typeof( x[ p ] ) !== "object" ) return false;
       // Numbers, Strings, Functions, Booleans must be strictly equal
 
-    if ( ! Object.equals( x[ p ],  y[ p ] ) ) return false;
+    if ( ! deepCompare( x[ p ],  y[ p ] ) ) return false;
       // Objects and Arrays must be tested recursively
   }
 
@@ -61,21 +61,25 @@ function describeTests (data, textStatus, transport) {
         "Basic tests",
         function() {
             beforeEach(function() {
-                           this.addMatchers({toHaveAttribute: function(expected) {
-                                                 var actual = this.actual;
-                                                 this.message = function () {
-                                                     return "Expected ["+ expected.key +"] = " + expected.value +
-                                                         " and got " + actual[expected.key];
-                                                 };
-                                                 var attrExists = (("undefined" !== typeof this.actual) &&
-                                                                   (expected.key in this.actual));
-                                                 if (!attrExists) {
-                                                     return false;
-                                                 }
-                                                 return deepCompare(expected.value, actual[expected.key]);
-                                             }
-                                            });
-                       });
+                jasmine.addMatchers(
+                        {toHaveAttribute: function(util, customEqualityTesters) {
+                            return { compare : function(actual, expected) {
+                                var result = {};
+                                result.message =  "Expected ["+ expected.key +"] = " + expected.value +
+                                    " and got " + actual[expected.key];
+                                var attrExists = (("undefined" !== typeof actual) &&
+                                        (expected.key in actual));
+                                if (!attrExists) {
+                                    result.pass=false;
+                                    return result;
+                                }
+                                result.pass=deepCompare(expected.value, actual[expected.key]);
+                                return result;
+                            }
+                            };
+                        }
+                        });
+            });
 
             it('Gets the most basic value', function () {
                    var rules = getRulesFromXML(data);
@@ -149,6 +153,104 @@ function describeTests (data, textStatus, transport) {
 
                    console.log(result);
                });
+
+            it('Adds an object as a result in toto', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test6"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"toto",
+                                                value:[{v1:"v1"}]});
+
+                console.log(result);
+            });
+
+            it('Adds two objects as a result in toto', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test7"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"toto",
+                                                value:[{v1:"v1"}, {v2:"value2"}]});
+
+                console.log(result);
+            });
+
+            it('Adds an object in two steps with same id as a result in toto', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test8"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"toto",
+                                                value:[{id:"o1", v1:"v1", v2:"value2"}]});
+
+                console.log(result);
+            });
+
+            it('Sets an object in two steps with same id as a result in toto without array', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test9"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"toto",
+                                                value:{id:"o1", v1:"v1", v2:"value2"}});
+
+                console.log(result);
+            });
+
+            it('Adds then set an object in two steps with same id as a result in toto without array', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test10"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"toto",
+                                                value:[{id:"o1", v1:"v1", v2:"value2"}]});
+
+                console.log(result);
+            });
+
+            it('Clears objects with DCLEAR in toto, then adds another object', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test11"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"toto",
+                                                value:[{id:"o2", v1:"v12", v2:"value2"}]});
+
+                console.log(result);
+            });
+
+            it('Clears objects with CLEAR in toto, then adds another object', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test12"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"toto",
+                                                value:[{id:"o2", v1:"v12", v2:"value2"}]});
+
+                console.log(result);
+            });
 
         });
 }

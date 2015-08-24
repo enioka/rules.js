@@ -30,8 +30,71 @@
 
   <RULE priority="18" mycondition="test5" >
    <THEN>
-     <LOG message="RULE with test4 condition fired" />
+     <LOG message="RULE with test5 condition fired" />
       <SET v="(catenate '(' 'hop test5' )" />
    </THEN>
   </RULE>
+  
+  <RULE priority="18" mycondition="test6" >
+   <THEN>
+     <LOG message="RULE with test6 condition fired" />
+      <ADD_OBJECT path="toto" v1="v1" />
+   </THEN>
+  </RULE>
+
+  <RULE priority="18" mycondition="test7" >
+   <THEN>
+     <LOG message="RULE with test7 condition fired" />
+      <ADD_OBJECT path="toto" v1="v1" />
+      <ADD_OBJECT path="toto" v2="value2" />
+   </THEN>
+  </RULE>
+
+  <RULE priority="18" mycondition="test8" >
+   <THEN>
+     <LOG message="RULE with test8 condition fired" />
+      <ADD_OBJECT path="toto" id="o1" v1="v1" />
+      <ADD_OBJECT path="toto" id="o1" v2="value2" />
+   </THEN>
+  </RULE>
+
+  <RULE priority="18" mycondition="test9" >
+   <THEN>
+     <LOG message="RULE with test9 condition fired" />
+      <SET_OBJECT path="toto" id="o1" v1="v1" />
+      <SET_OBJECT path="toto" id="o1" v2="value2" />
+   </THEN>
+  </RULE>
+
+  <RULE priority="18" mycondition="test10" >
+   <THEN>
+     <LOG message="RULE with test10 condition fired" />
+      <ADD_OBJECT path="toto" id="o1" v1="v1" />
+      <SET_OBJECT path="toto" id="o1" v2="value2" />
+   </THEN>
+  </RULE>
+  
+
+  <RULE priority="18" mycondition="test11" >
+   <THEN>
+     <LOG message="RULE with test11 condition fired" />
+      <ADD_OBJECT path="toto" id="o1" v1="v1" v2="v21"/>
+      <ADD_OBJECT path="toto" id="o2" v1="v1" />
+      <DCLEAR path="toto"/>
+      <ADD_OBJECT path="toto" id="o2" v1="v12" />
+      <SET_OBJECT path="toto" id="o2" v2="value2" />
+   </THEN>
+  </RULE>
+  
+  <RULE priority="18" mycondition="test12" >
+   <THEN>
+     <LOG message="RULE with test12 condition fired" />
+      <ADD_OBJECT path="toto" id="o1" v1="v1" v2="v21"/>
+      <ADD_OBJECT path="toto" id="o2" v1="v1" />
+      <CLEAR toto=""/>
+      <ADD_OBJECT path="toto" id="o2" v1="v12" />
+      <SET_OBJECT path="toto" id="o2" v2="value2" />
+   </THEN>
+  </RULE>
+  
 </RULES>

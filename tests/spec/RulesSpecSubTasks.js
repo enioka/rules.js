@@ -46,7 +46,7 @@ function deepCompare (x, y) {
     if ( typeof( x[ p ] ) !== "object" ) return false;
       // Numbers, Strings, Functions, Booleans must be strictly equal
 
-    if ( ! Object.equals( x[ p ],  y[ p ] ) ) return false;
+    if ( ! deepCompare( x[ p ],  y[ p ] ) ) return false;
       // Objects and Arrays must be tested recursively
   }
 
@@ -62,21 +62,25 @@ function describeTests (data, textStatus, transport) {
         "SubTasks Tests",
         function() {
             beforeEach(function() {
-                           this.addMatchers({toHaveAttribute: function(expected) {
-                                                 var actual = this.actual;
-                                                 this.message = function () {
-                                                     return "Expected ["+ expected.key +"] = " + expected.value +
-                                                         " and got " + actual[expected.key];
-                                                 };
-                                                 var attrExists = (("undefined" !== typeof this.actual) &&
-                                                                   (expected.key in this.actual));
-                                                 if (!attrExists) {
-                                                     return false;
-                                                 }
-                                                 return deepCompare(expected.value, actual[expected.key]);
-                                             }
-                                            });
-                       });
+                jasmine.addMatchers(
+                        {toHaveAttribute: function(util, customEqualityTesters) {
+                            return { compare : function(actual, expected) {
+                                var result = {};
+                                result.message =  "Expected ["+ expected.key +"] = " + expected.value +
+                                    " and got " + actual[expected.key];
+                                var attrExists = (("undefined" !== typeof actual) &&
+                                        (expected.key in actual));
+                                if (!attrExists) {
+                                    result.pass=false;
+                                    return result;
+                                }
+                                result.pass=deepCompare(expected.value, actual[expected.key]);
+                                return result;
+                            }
+                            };
+                        }
+                        });
+            });
 
             it('Run a subtask foreach object    ', function () {
                    var rules = getRulesFromXML(data);

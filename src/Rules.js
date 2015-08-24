@@ -1361,7 +1361,7 @@ enioka.rules = (
                 };
 
                 var assignHandler = function (context, action, rule) {
-                    if ((action.tagName == "SET") || (action.tagName == "ADD")) {
+                    if ((action.tagName == "SET") || (action.tagName == "ADD") || (action.tagName == "CLEAR")) {
                         var attributes = action.attributes;
                         var prefix = null;
                         if (action.hasAttribute("prefix")) {
@@ -1383,12 +1383,16 @@ enioka.rules = (
                             }
                             var attributeValue = action.getAttribute(attributePath);
                             var value = context.getValue(attributeValue);
+                            if (action.tagName == "CLEAR") {
+                                attributePath = prefix + attributePath;
+                                context.setValue(attributePath,null);
+                            }
                             if (value) {
                                 if (action.tagName == "SET") {
                                     attributePath = prefix + attributePath;
                                     context.setValue(attributePath,value);
                                 }
-                                else {
+                                if (action.tagName == "ADD") {
                                     attributePath = prefix + attributePath;
                                     context.addValue(attributePath,value);
                                 }
@@ -1398,6 +1402,7 @@ enioka.rules = (
                 };
                 this.actionHandlers.SET = assignHandler;
                 this.actionHandlers.ADD = assignHandler;
+                this.actionHandlers.CLEAR = assignHandler;
 
                 var textAssignHandler = function (context, action, rule) {
                     if ((action.tagName == "SET_TEXT") || (action.tagName == "ADD_TEXT")) {
@@ -1438,7 +1443,7 @@ enioka.rules = (
                                 if (action.tagName == "SET_TEXT") {
                                     context.setValue(path,value);
                                 }
-                                else {
+                                if (action.tagName == "ADD_TEXT") {
                                     context.addValue(path,value);
                                 }
                             }
@@ -1449,7 +1454,7 @@ enioka.rules = (
                 this.actionHandlers.ADD_TEXT = textAssignHandler;
 
                 var dassignHandler = function (context, action, rule) {
-                    if ((action.tagName == "DSET") || (action.tagName == "DADD")) {
+                    if ((action.tagName == "DSET") || (action.tagName == "DADD") || (action.tagName == "DCLEAR")) {
                         var path = context.getValue(action.getAttribute("path"));
                         if (path){
                             var prefix = null;
@@ -1465,12 +1470,16 @@ enioka.rules = (
                                 prefix=prefix+".";
                             }
                             path = prefix + path;
+                            if (action.tagName == "DCLEAR") {
+                                context.setValue(path,null);
+                                return;
+                            }
                             var value = context.getValue(action.getAttribute("value"));
                             if (value) {
                                 if (action.tagName == "DSET") {
                                     context.setValue(path,value);
                                 }
-                                else {
+                                if (action.tagName == "DADD") {
                                     context.addValue(path,value);
                                 }
                             }
@@ -1479,6 +1488,114 @@ enioka.rules = (
                 };
                 this.actionHandlers.DSET = dassignHandler;
                 this.actionHandlers.DADD = dassignHandler;
+                this.actionHandlers.DCLEAR = dassignHandler;
+                
+                var objectHandler = function (context, action, rule) {
+                    if ((action.tagName == "SET_OBJECT") || (action.tagName == "ADD_OBJECT")) {
+                        var attributes = action.attributes;
+                        var path = context.getValue(action.getAttribute("path"));
+                        if (path){
+                            var prefix = null;
+                            if (action.hasAttribute("prefix")) {
+                                prefix = action.getAttribute("prefix");
+                                if (prefix.charAt(0)=='.') {
+                                    prefix = rule.getPrefix() + prefix;
+                                }
+                            } else {
+                                prefix = rule.getPrefix();
+                            }
+                            if (prefix !="") {
+                                prefix=prefix+".";
+                            }
+                            path = prefix + path;
+                            var object={};
+                            for (var i=0; i<attributes.length;i++)  {
+                                var attribute = attributes.item(i);
+                                var attributePath = attribute.nodeName;
+                                if (attributePath=="prefix") {
+                                    continue;
+                                }
+                                if (attributePath=="path") {
+                                    continue;
+                                }
+                                var attributeValue = action.getAttribute(attributePath);
+                                var value = context.getValue(attributeValue);
+                                if (value) {
+                                    object[attributePath] = value;
+                                }
+                            }
+                            if (action.tagName == "SET_OBJECT") {
+                                var objects = context.getValue("$"+path);
+                                if (objects && (objects.constructor == Array)) {
+                                    if (object.id) {
+                                        var found=false;
+                                        for (var i=0; i< objects.length; i++) {
+                                            if (objects[i] && objects[i].id && (objects[i].id == object.id)) {
+                                                found = true;
+                                                for (var name in object) {
+                                                    if (object.hasOwnProperty(name)) {
+                                                        objects[i][name] = object[name];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (!found) {
+                                            objects.push(object);
+                                        }
+                                    } else {
+                                        info_error("Cannot set an object in an array without an id", object);
+                                    }
+                                } else {
+                                    // If ids are involved, use id as a mean to merge information or replace it
+                                    if (objects && objects.id && object.id) {
+                                        // If there is an object there of same id, then just update it
+                                        if (objects.id == object.id) {
+                                            found = true;
+                                            for (var name in object) {
+                                                if (object.hasOwnProperty(name)) {
+                                                    objects[name] = object[name];
+                                                }
+                                            }
+                                        } else { // Else just replace "stupidly"
+                                            context.setValue(path,object);                                    
+                                        }
+                                    } else { // Else just replace "stupidly"
+                                        context.setValue(path,object);                                    
+                                    }
+                                }
+                            }
+                            if (action.tagName == "ADD_OBJECT") {
+                                var objects = context.getValue("$"+path);
+                                if (objects) {
+                                    if (object.id) {
+                                        var found=false;
+                                        for (var i=0; i< objects.length; i++) {
+                                            // if an object of same id exists, add/replace information of this object
+                                            if (objects[i] && objects[i].id && (objects[i].id == object.id)) {
+                                                found = true;
+                                                for (var name in object) {
+                                                    if (object.hasOwnProperty(name)) {
+                                                        objects[i][name] = object[name];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (!found) {
+                                            objects.push(object);
+                                        }                                        
+                                    } else {
+                                        objects.push(object);
+                                    }
+                                } else {
+                                    context.setValue(path,[object]);
+                                }
+                            }
+                        }
+                    }
+                };
+                this.actionHandlers.SET_OBJECT = objectHandler;
+                this.actionHandlers.ADD_OBJECT = objectHandler;
+
 
                 this.actionHandlers.CONTROL = function (context, action, rule) {
                     if (action.tagName == "CONTROL") {

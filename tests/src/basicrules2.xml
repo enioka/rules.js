@@ -96,5 +96,13 @@
       <SET_OBJECT path="toto" id="o2" v2="value2" />
    </THEN>
   </RULE>
+
+  <RULE priority="18" mycondition="test13" >
+   <THEN>
+     <LOG message="RULE with test13 condition fired" />
+      <SET v="(+ (+ 2 3) (- 3 1))" />
+   </THEN>
+  </RULE>
+
   
 </RULES>

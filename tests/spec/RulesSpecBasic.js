@@ -252,5 +252,19 @@ function describeTests (data, textStatus, transport) {
                 console.log(result);
             });
 
+            it('Set a value with a nested lisp expression', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test13"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"v",
+                                                value: 7});
+
+                console.log(result);
+            });
+
         });
 }

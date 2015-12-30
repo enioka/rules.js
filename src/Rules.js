@@ -575,6 +575,19 @@ enioka.rules = (
                         i++;
                         continue;
                     }
+                    if (expression.charAt(i) == '(') {
+                        var index = this._getExpressionIndex(expression, i);
+                        if (index == -1) {
+                            info_debug("Syntax error in expression ", expression);
+                            return null;
+                        }
+                        else {
+                            args.push(this._getExpressionValue(expression.substring(i+1,index)));
+                            i=index+1;
+                            from=i;
+                            continue;
+                        }
+                    }
                     if ((expression.charAt(i) == ' ') || (expression.charAt(i) == '\t') || (expression.charAt(i) == '\n')) {
                         if (from == i) {
                             i++; from++;
@@ -638,6 +651,8 @@ enioka.rules = (
              */
             getValue : function(path) {
                 if (!path) return null;
+                if (typeof path == "number") return path;
+                if (typeof path == "boolean") return path;
                 if (path.length == 0) return null;
                 if ((path.charAt(0) == '"') || (path.charAt(0) == '\'')) {
                     if (path.length < 2) return null;

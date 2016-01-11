@@ -653,6 +653,7 @@ enioka.rules = (
                 if (!path) return null;
                 if (typeof path == "number") return path;
                 if (typeof path == "boolean") return path;
+                if (typeof path == "object") return path;
                 if (path.length == 0) return null;
                 if ((path.charAt(0) == '"') || (path.charAt(0) == '\'')) {
                     if (path.length < 2) return null;

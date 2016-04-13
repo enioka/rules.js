@@ -1,4 +1,4 @@
-// Copyright 2012 enioka. All rights reserved
+// Copyright 2012,2013,2014,2015,2016 enioka. All rights reserved
 // Distributed under the GNU LESSER GENERAL PUBLIC LICENSE V3
 // Except the Class implementation distributed under the new BSD licence
 // Authors: Jean-Christophe Ferry (jean-christophe.ferry@enioka.com)
@@ -932,12 +932,14 @@ enioka.rules = (
             addRule : function(keys, index, rule) {
                 // Check if index tree is at a leaf
                 if (index >= keys.length) {
-                    // If so and there is no rule in this index, create an empty array
-                    if (!this.rules) {
-                        this.rules = new Array();
+                    if (rule.actionsXML && (rule.actionsXML.length > 0)) {
+                        // If so and there is no rule in this index, create an empty array
+                        if (!this.rules) {
+                            this.rules = new Array();
+                        }
+                        // Add the rule to the leaf index
+                        this.rules.push(rule);
                     }
-                    // Add the rule to the leaf index
-                    this.rules.push(rule);
                     return;
                 }
                 else {
@@ -947,25 +949,34 @@ enioka.rules = (
                     // Check if this rule actually has this key as an optimized condition
                     if (rule.hasKey(key)) {
                         // The rule does use this key
-                        var value = rule.getKey(key);
+                        var values = rule.getKey(key);
                         // If no subindex, then allocate it
                         if (!this.indexes)
                             this.indexes = new Object();
-                        // If no subindex of this key, then allocate it as well
-                        if (!this.indexes[value]) {
-                            this.indexes[value] = new RuleIndex();
-                            // Then one must reinject all rules that happened to be
-                            // under the nokey entry
-                            if (this.noKey) {
-                                var noKeyRules = new Array();
-                                this.noKey.getRules(null, noKeyRules);
-                                for (var i=0; i< noKeyRules.length; i++) {
-                                    this.indexes[value].addRule(keys, index, noKeyRules[i]);
+                        if (values && (values.indexOf("|") > -1)) {
+                            values = values.split("|");
+                        } else {
+                            values = [values];
+                        }
+                        for (var i=0; i < values.length; i++) {
+                            var value = values[i];
+                            
+                            // If no subindex of this key, then allocate it as well
+                            if (!this.indexes[value]) {
+                                this.indexes[value] = new RuleIndex();
+                                // Then one must reinject all rules that happened to be
+                                // under the nokey entry
+                                if (this.noKey) {
+                                    var noKeyRules = new Array();
+                                    this.noKey.getRules(null, noKeyRules);
+                                    for (var i=0; i< noKeyRules.length; i++) {
+                                        this.indexes[value].addRule(keys, index, noKeyRules[i]);
+                                    }
                                 }
                             }
-                        }
 
-                        this.indexes[value].addRule(keys, index+1, rule);
+                            this.indexes[value].addRule(keys, index+1, rule);
+                        }
                     }
                     else {
                         // This rule does not use this key, hence all key values apply
@@ -991,6 +1002,10 @@ enioka.rules = (
              * @param rules The array of collected rules where each rule should be added
              */
             getRules : function(context, keys, index, rules) {
+                // Pruning of index without any rules with actions
+                if (!this.hasActions) {
+                    return;
+                }
                 if (index >= keys.length) {
                     if (this.rules) {
                         for (var i=0; i< this.rules.length; i++) {
@@ -1010,18 +1025,14 @@ enioka.rules = (
                 } else {
                     if (context) {
                         var key = "$"+keys[index];
-                        if (context.getValue(key)) {
+                        if (this.indexes) {
                             var keyValue = context.getValue(key);
-                            if (this.indexes && (this.indexes[keyValue])) {
+                            if (this.indexes[keyValue]) {
                                 this.indexes[keyValue].getRules(context,keys,index+1,rules);
                             }
-                            if (this.noKey) {
-                                this.noKey.getRules(context,keys,index+1,rules);
-                            }
-                        } else {
-                            if (this.noKey) {
-                                this.noKey.getRules(context,keys,index+1,rules);
-                            }
+                        }
+                        if (this.noKey) {
+                            this.noKey.getRules(context,keys,index+1,rules);
                         }
                     } else {
                         if (this.noKey) {
@@ -1037,6 +1048,33 @@ enioka.rules = (
                     }
                 }
                 return;
+            },
+            
+            optimize : function() {
+                this.hasActions = false;
+                if (this.rules && this.rules.length) {
+                    for (var i=0; i < this.rules.length; i++) {
+                        var rule = this.rules[i];
+                        if (rule.actionsXML && rule.actionsXML.length) {
+                            this.hasActions = true;
+                        }
+                    }
+                }
+                if (this.indexes) {
+                    for (var key in this.indexes) {
+                        if (this.indexes.hasOwnProperty(key)) {
+                            if (this.indexes[key].optimize()) {
+                                this.hasActions = true;
+                            }
+                        }
+                    }
+                }
+                if (this.noKey) {
+                    if (this.noKey.optimize()) {
+                        this.hasActions = true;
+                    }
+                }
+                return this.hasActions;
             }
 
         };
@@ -1136,6 +1174,8 @@ enioka.rules = (
                 for (var i=0;i<this.rulesXML.length;i++) {
                     this._indexRule(this.rulesXML[i], null);
                 }
+                
+                this.index.optimize();
 
                 info_debug("The engine has compiled all rules and indexed them against used keys : ", this);
             },
@@ -1783,19 +1823,34 @@ enioka.rules = (
             printRulesIndex : function(index,i) {
                 if (index) {
                     var nSpaces = this.nSpaces(i);
-                    console.log(nSpaces + "key="+index.key+ ", rules="+this.rulesListString(index.rules),index);
-                    if (index.indexes){
+                    if (index.indexes) {
+                        console.log(nSpaces + "key="+index.key+ ", rules="+this.rulesListString(index.rules));
                         for (var name in index.indexes) {
                             if (index.indexes.hasOwnProperty(name)) {
                                 console.log(nSpaces + "..value="+name);
                                 this.printRulesIndex(index.indexes[name],i+1);
                             }
                         }   
-                    }
-                    if (index.noKey) {
-                        console.log(nSpaces + "..value=nokey");
+                        if (index.noKey) {
+                            console.log(nSpaces + "..value=nokey");
+                            this.printRulesIndex(index.noKey,i+1);
+                        }
+                    } else {
                         this.printRulesIndex(index.noKey,i+1);
+                        if (index.rules && (index.rules.length > 0)) {
+                            console.log(nSpaces + " rules=" + this.rulesListString(index.rules));
+                        }
                     }
+                }
+            },
+            
+            showRule : function (rule) {
+                console.log(rule);
+            },
+            
+            showRules : function (rules) {
+                for (var i=0; i< rules.length; i++) {
+                    this.showRule(rules[i]);
                 }
             },
 
@@ -1807,7 +1862,7 @@ enioka.rules = (
                 
                 // First use index to get the set of rules candidate for execution
                 this.index.getRules(context, this.keys, 0, rules);
-
+                
                 // Then find the highest priority rule
                 var maxPriority = Number.NEGATIVE_INFINITY;
                 for (var i = 0 ; i < rules.length; i++) {

@@ -104,5 +104,13 @@
    </THEN>
   </RULE>
 
+
+  <RULE priority="18" mycondition="test14|test14bis" >
+   <THEN>
+     <LOG message="RULE with test14 or test15 condition fired" />
+      <SET v="(+ (+ 2 3) (- 3 1))" />
+   </THEN>
+  </RULE>
+
   
 </RULES>

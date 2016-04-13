@@ -266,5 +266,32 @@ function describeTests (data, textStatus, transport) {
                 console.log(result);
             });
 
+            it('Rule with an optimized condition with an or (test14|test14bis)', function () {
+                var rules = getRulesFromXML(data);
+                var engine = new RuleEngine({rulesXML : rules});
+                var context = new RuleContext({mycondition:"test14"});
+
+                var result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"v",
+                                                value: 7});
+
+                context = new RuleContext({mycondition:"test14bis"});
+
+                result = engine.run(context);
+
+                expect(result).not.toBeNull(null);
+                expect(result).toHaveAttribute({key:"v",
+                                                value: 7});
+
+                context = new RuleContext({mycondition:"test14ter"});
+
+                result = engine.run(context);
+
+                expect(result).toBeUndefined(null);
+                console.log(result);
+            });
+
         });
 }

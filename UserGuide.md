@@ -79,8 +79,11 @@ Indexed optimized conditions
 
 As mentioned in general syntax, conditions in the RULE tag of the general form `<access_path>="<value>"` are indexed.
 The associated `<access_path>` are evaluated once, and a direct index points to the associated relevant rules that specify
-the proper values. Only values and strict equality conditions are possible so far. Extension to support explicit list
-of values is under development, but more "dynamic" conditions as matching or comparisons would be much harder.
+the proper values. Only values and strict equality conditions are possible so far. 
+
+Extension to support explicit list of values has recently been added. For this just use the syntax "<value1>|<value2>". 
+
+At some point, syntax should be transparently merged in regular IF syntax. But needs some work.
 
 
 Conditions detailed syntax

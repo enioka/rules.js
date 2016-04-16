@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: RuleContext</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: RuleContext</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="enioka.html">enioka</a><a href="enioka.rules.html">.rules</a>.</span>RuleContext</h2>
+        
+            <div class="class-description"><br/>
+<br/>
+The Rule Context is the way through which the engine holds grip on objects
+on which it performs its reasoning. It holds also the required cache for efficient
+data access.
+<br/>
+<br/>
+This class is not directly exposed in the API. It is used internally by the engine.
+A rule context is allocated for each call of the engine and holds the
+grip on all variables on which the engine will apply rules.
+<br/>
+<br/>
+For more advanced uses, one may need to access and manipulate this
+context from the outside. Still, this is a bad idea for the moment
+since this object holds whatever "cache" is needed to  assess
+rule conditions efficiently. Hence direct access to this context should
+not be granted for the moment explicitely.</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="RuleContext"><span class="type-signature"></span>new RuleContext<span class="signature">(properties)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The properties is the 'flat' Object to be passed over to the engine.\n
+Its attributes will be the names that will be used to access objects of the world.\n
+
+This may not be a flat object and be a custom class. This is possible as long
+as this object has a "defaultWrapper" attribute holding a default wrapper to use to access its
+contents.
+<br/>
+<br/>
+If the object is actually flat, it will be wrapped by a built in wrapper, enioka.rules-RuleFact.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="implements">Implements:</dt>
+    <dd class="implements"><ul>
+        
+            <li><a href="enioka.rules.IRuleFact.html">enioka.rules.IRuleFact</a></li>
+        
+    </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line422">line 422</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="addValue"><span class="type-signature"></span>addValue<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    General entry point to add a value to a path
+It is not the same as previous  it will force specified path to be an array of values
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line806">line 806</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="checkCondition"><span class="type-signature"></span>checkCondition<span class="signature">(condition)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This method checks that a given <a href="enioka.rules.RuleCondition.html">enioka.rules.RuleCondition</a> is true or false in the current context
+As explained in the general documentation, a number of predefined conditions exist
+but it may be extended at will with specific condition handlers supplied at the
+creation of the engine.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>condition</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="enioka.rules.RuleCondition.html">enioka.rules.RuleCondition</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Condition to be scanned</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line458">line 458</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="clearRulesEvalCache"><span class="type-signature"></span>clearRulesEvalCache<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    During evaluation, rules may be nested. Their conditions are
+evaluated once only and then cached (unless a recurse or choose
+control invalidates it)
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line530">line 530</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fireAction"><span class="type-signature"></span>fireAction<span class="signature">(action, rule)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This method executes a given <a href="enioka.rules.RuleAction.html">enioka.rules.RuleAction</a>  in the current context
+As explained in the general documentation, a number of predefined actions exist
+but it may be extended at will with specific action handlers supplied at the
+creation of the engine.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>action</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="enioka.rules.RuleAction.html">enioka.rules.RuleAction</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Action that will be fired</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rule</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="enioka.rules.Rule.html">enioka.rules.Rule</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Rule that is fired</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line480">line 480</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getEngine"><span class="type-signature"></span>getEngine<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Gets the engine associated to this context.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line497">line 497</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRuleEval"><span class="type-signature"></span>getRuleEval<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Retrieves cached rule's evaluation
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line550">line 550</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getValue"><span class="type-signature"></span>getValue<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    General entry point in charge of retrieving a value from a path or an expression <br/>
+<br/>
+The general form of such expression is either <br/>
+- a quoted litteral (with simple or double quotes) <br/>
+- a string prefixed with a $ sign meaning that what follows (without spaces)
+is an access path in context
+- a string starting with a ( , then it is considered an expression in lisp
+like syntax with first item being a function, and following values are parameters.
+Expressions can be nested at will <br/>
+- a litteral in any other case
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line752">line 752</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="hasRuleEval"><span class="type-signature"></span>hasRuleEval<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Checks if a rule has been evaluated already
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line540">line 540</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setEngine"><span class="type-signature"></span>setEngine<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Sets the engine associated to this context.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line507">line 507</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setRuleEval"><span class="type-signature"></span>setRuleEval<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Sets cached rule's evaluation
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line560">line 560</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setValue"><span class="type-signature"></span>setValue<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    General entry point to set a value to a path
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line792">line 792</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="enioka.rules.Rule.html">Rule</a></li><li><a href="enioka.rules.RuleContext.html">RuleContext</a></li><li><a href="enioka.rules.RuleEngine.html">RuleEngine</a></li><li><a href="enioka.rules.RuleExternalObject.html">RuleExternalObject</a></li><li><a href="enioka.rules.RuleFact.html">RuleFact</a></li><li><a href="enioka.rules.RuleIndex.html">RuleIndex</a></li><li><a href="enioka.rules.RuleResult.html">RuleResult</a></li></ul><h3>Namespaces</h3><ul><li><a href="enioka.html">enioka</a></li><li><a href="enioka.rules.html">rules</a></li><li><a href="enioka.rules.actions.html">actions</a></li><li><a href="enioka.rules.conditions.html">conditions</a></li><li><a href="enioka.rules.functions.html">functions</a></li></ul><h3>Interfaces</h3><ul><li><a href="enioka.rules.IRuleFact.html">IRuleFact</a></li><li><a href="enioka.rules.RuleAction.html">RuleAction</a></li><li><a href="enioka.rules.RuleCondition.html">RuleCondition</a></li><li><a href="enioka.rules.RuleElement.html">RuleElement</a></li><li><a href="enioka.rules.RuleFunction.html">RuleFunction</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Apr 16 2016 14:17:05 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

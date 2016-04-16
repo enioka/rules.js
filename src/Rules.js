@@ -5,15 +5,21 @@
 
 /**
  * @namespace enioka
+ * @description Enioka published open source code. Enioka is committed to contribute general purpose tools
+ * that may help others in other contexts.<br/>
+ * Copyright 2012,2013,2014,2015,2016 enioka. All rights reserved <br/>
  * @see <a href="http://www.enioka.com"/> enioka </a>
  */
 var enioka = (enioka || {});
 
 /**
- * @namespace enioka.rules
- * @description enioka javascript rule engine <br/>
+ * @memberof enioka
+ * @namespace rules
+ * @description This is the enioka javascript rule engine. <br/>
+ * Copyright 2012,2013,2014,2015,2016 enioka. All rights reserved <br/>
  * Distributed under the GNU LESSER GENERAL PUBLIC LICENSE V3 <br/>
- * Except the Class implementation distributed under the new BSD licence
+ * Except the Class implementation distributed under the new BSD licence <br/>
+ * @author Jean-Christophe Ferry (jean-christophe.ferry@enioka.com)
  */
 enioka.rules = (
     function (eniokarules) {
@@ -26,51 +32,7 @@ enioka.rules = (
          Class, version 2.7
          Copyright (c) 2006, 2007, 2008, Alex Arnell <alex@twologic.com>
          Licensed under the new BSD License. See end of file for full license terms.
-         */
-        
-        function info_debug(text,object) {
-            if (eniokarules.info_debug) {
-                eniokarules.info_debug(text,object);
-            } else {
-                console.log(text,object);
-            }
-        }
-        function info_warn(text,object) {
-            if (eniokarules.info_warn) {
-                eniokarules.info_warn(text,object);
-            } else {
-                console.log(text,object);
-            }
-        }
-        function info_error(text,object) {
-            if (eniokarules.info_error) {
-                eniokarules.info_error(text,object);
-            } else {
-                console.log(text,object);
-            }
-        }
-        function user_debug(text,object) {
-            if (eniokarules.user_debug) {
-                eniokarules.user_debug(text,object);
-            } else {
-                console.log(text,object);
-            }
-        }
-        function user_warn(text,object) {
-            if (eniokarules.user_warn) {
-                eniokarules.user_warn(text,object);
-            } else {
-                console.log(text,object);
-            }
-        }
-        function user_error(text,object) {
-            if (eniokarules.user_error) {
-                eniokarules.user_error(text,object);
-            } else {
-                console.log(text,object);
-            }
-        }
-
+         */        
         var Class = (function() {
                          var __extending = {};
 
@@ -188,6 +150,50 @@ enioka.rules = (
          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          */
 
+        // Following functions are basic functions used for standardized logging interface
+        function info_debug(text,object) {
+            if (eniokarules.info_debug) {
+                eniokarules.info_debug(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function info_warn(text,object) {
+            if (eniokarules.info_warn) {
+                eniokarules.info_warn(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function info_error(text,object) {
+            if (eniokarules.info_error) {
+                eniokarules.info_error(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function user_debug(text,object) {
+            if (eniokarules.user_debug) {
+                eniokarules.user_debug(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function user_warn(text,object) {
+            if (eniokarules.user_warn) {
+                eniokarules.user_warn(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+        function user_error(text,object) {
+            if (eniokarules.user_error) {
+                eniokarules.user_error(text,object);
+            } else {
+                console.log(text,object);
+            }
+        }
+
 
 
         // Small utility functions here
@@ -284,40 +290,136 @@ enioka.rules = (
             }
             return false;
         }
+        
+        /**
+         * @memberof enioka.rules
+         * @interface
+         * @classdesc
+         * <br/> <br/>
+         * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
+         * simple: get, set and add attribute value. If they do not support this access process, then
+         * they must be "wrapped" by a wrapper object that will take care to make "as if" the
+         * objects did indeed follow this API.
+         * <br/> <br/>
+         * 3 built in wrappers are provided : <br/>
+         * - {@link enioka.rules.RuleFact} : simple "internal" class to represent facts if not specified by client application <br/>
+         * - {@link enioka.rules.RuleExternalObject} : simple "external" class to represent facts provided by client applications, without
+         * knowing exactly what they are <br/>
+         * - {@link enioka.rules.RuleResult} : simple "result" class to represent info produced by default by the engine and to be
+         * used by client applications as a default to retrieve "results" returned by the engine
+         * <br/> <br/>
+         */
+        var IRuleFact = {
+            initialize : function() {
+            },
 
-        var RuleContext = {
             /**
-             * @class
-             * The Rule Context class
-             * <br/>
-             * <br/>
-             * The Rule Context is the way through which the engine holds grip on objects
-             * on which it performs its reasoning. It holds also the required cache for efficient
-             * data access.
-             * <br/>
-             * <br/>
-             * This class is not directly exposed in the API. It is used internally by the engine.
-             * A rule context is allocated for each call of the engine and holds the
-             * grip on all variables on which the engine will apply rules
-             * <br/>
-             * <br/>
-             * For more advanced uses, one may need to access and manipulate this
-             * context from the outside. Still, this is a bad idea for the moment
-             * since this object holds whatever "cache" is needed to  assess
-             * rule conditions efficiently. Hence direct access to this context should
-             * not be granted for the moment explicitely.
-             * @constructs
-             * @param properties The properties is the 'flat' Object to be passed over to the engine.\n
-             * Its attributes will be the names that will be used to access objects of the world.\n
-             *
-             * This may not be a flat object and be a custom class. This is possible as long
-             * as this object has a "defaultWrapper" attribute holding a default wrapper to use to access its
-             * contents.\n
-             *
-             * If the object is actually flat, it will be wrapped by a built in wrapper, {@link enioka.rules-RuleFact}.
-
-             *
+             * @instance
+             * @description
+             * Gets the value of the specified attribute
+             * @param attribute The name of the attribute
+             * @returns the value of the specified attribute in the object. 
              */
+            getAttributeValue : function (attribute) {
+                return this[attribute];
+            },
+
+            /**
+             * @instance
+             * @description
+             * Sets the value of the specified attribute with
+             * specified value.
+             * @param attribute The name of the attribute
+             * @param value The value to set to the attribute
+             * @returns the value of the specified attribute in the object. 
+             */
+            setAttributeValue : function (attribute,value) {
+                return this[attribute] = value;
+            },
+
+            /**
+             * @instance
+             * @description
+             * Sets the value of the specified attribute with
+             * specified value.
+             * @param attribute the name of the attribute
+             * @param value the value to set to the attribute
+             * @returns the array of values of the specified attribute in the object. 
+             */
+            addAttributeValue : function (attribute,value) {
+                if (this[attribute]) {
+                    if (this[attribute] instanceof Array) {
+                        this[attribute].push(value);
+                    }
+                    else {
+                        info_debug('Error : attribute is not a array : should not access it with add', this);
+                        info_debug('Warning : attribute converted to array');
+                        var tab = new Array();
+                        tab.push(this[attribute]);
+                        tab.push(value);
+                        this[attribute] = tab;
+                    }
+                }
+                else {
+                    var tab = new Array();
+                    tab.push(value);
+                    return this[attribute] = tab;
+                }
+            },
+
+            /**
+             * @instance
+             * @description
+             * Wraps object accessible through this path. If provided,
+             * this method will either create a wrapper object or return the object itself
+             * if this object has no need to be wrapped at all
+             * @param object The object to wrap
+             * @param path The current access path to this object
+             * @param context The context in which access is performed, useful to retrieve
+             * initial context information useful to actually access to the object data
+             * @param father The object from which one tries to access this very object
+             * @returns the façade object that will wrap the actual data. As a default returns self.
+             */
+            wrapObject: function (object, path, context, father) {
+                return this;
+            }
+        };
+        IRuleFact = Class.create(IRuleFact);
+
+        /**
+         * @class
+         * @memberof enioka.rules
+         * @implements {enioka.rules.IRuleFact}
+         * @classdesc
+         * <br/>
+         * <br/>
+         * The Rule Context is the way through which the engine holds grip on objects
+         * on which it performs its reasoning. It holds also the required cache for efficient
+         * data access.
+         * <br/>
+         * <br/>
+         * This class is not directly exposed in the API. It is used internally by the engine.
+         * A rule context is allocated for each call of the engine and holds the
+         * grip on all variables on which the engine will apply rules.
+         * <br/>
+         * <br/>
+         * For more advanced uses, one may need to access and manipulate this
+         * context from the outside. Still, this is a bad idea for the moment
+         * since this object holds whatever "cache" is needed to  assess
+         * rule conditions efficiently. Hence direct access to this context should
+         * not be granted for the moment explicitely.
+         * @param properties The properties is the 'flat' Object to be passed over to the engine.\n
+         * Its attributes will be the names that will be used to access objects of the world.\n
+         *
+         * This may not be a flat object and be a custom class. This is possible as long
+         * as this object has a "defaultWrapper" attribute holding a default wrapper to use to access its
+         * contents.
+         * <br/>
+         * <br/>
+         * If the object is actually flat, it will be wrapped by a built in wrapper, {@link enioka.rules-RuleFact}.
+         *
+         */
+        var RuleContext = {
             initialize : function(properties) {
                 this.wrapCache = new Object();
                 this.rulesEvalCache = new Object();
@@ -343,22 +445,15 @@ enioka.rules = (
             },
 
             /**
-             * This method checks that a given condition is true or false in the current context
+             * @function
+             * @instance
+             * @description
+             * This method checks that a given {@link enioka.rules.RuleCondition} is true or false in the current context
              * As explained in the general documentation, a number of predefined conditions exist
              * but it may be extended at will with specific condition handlers supplied at the
              * creation of the engine.
              *
-             * Predefined conditions are :
-             * * LESS or <
-             * * MORE or >
-             * * LIKE
-             * * EQUAL
-             * * INTERSECTS
-             *
-             * Elementary conditions can then be used in combinations
-             * * NOT
-             * * OR
-             * * AND
+             * @param {enioka.rules.RuleCondition} condition - Condition to be scanned
              */
             checkCondition : function(condition) {
                 var engine = this.getEngine();
@@ -372,21 +467,15 @@ enioka.rules = (
             },
 
             /**
-             * This method executes a given action in the current context
+             * @function
+             * @instance
+             * @description
+             * This method executes a given {@link enioka.rules.RuleAction}  in the current context
              * As explained in the general documentation, a number of predefined actions exist
              * but it may be extended at will with specific action handlers supplied at the
              * creation of the engine.
-             *
-             * Predefined actions are available to produce results or act on the objects :
-             * * SET
-             * * DSET
-             * * ADD
-             * * DADD
-             *
-             * Other actions make possible some control over the execution of the engine
-             * * CONTROL
-             * * RECURSE
-             * * CHOOSE
+             * @param {enioka.rules.RuleAction} action - Action that will be fired
+             * @param {enioka.rules.Rule} rule - Rule that is fired
              */
             fireAction : function(action, rule) {
                 var engine = this.getEngine();
@@ -400,6 +489,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Gets the engine associated to this context.
              */
             getEngine : function() {
@@ -407,6 +499,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Sets the engine associated to this context.
              */
             setEngine : function(engine) {
@@ -414,6 +509,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Default wrapper to objects of the world
              * @private
              */
@@ -422,6 +520,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * During evaluation, rules may be nested. Their conditions are
              * evaluated once only and then cached (unless a recurse or choose
              * control invalidates it)
@@ -431,6 +532,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Checks if a rule has been evaluated already
              */
             hasRuleEval : function (rule) {
@@ -438,6 +542,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Retrieves cached rule's evaluation
              */
             getRuleEval : function (rule) {
@@ -445,6 +552,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Sets cached rule's evaluation
              */
             setRuleEval : function (rule, match) {
@@ -452,31 +562,9 @@ enioka.rules = (
             },
 
             /**
-             * Wraps an object along its access path, so that this object
-             * can be used in object traversal as well. This wrapping mechanism
-             * is quite extensible for a smooth integration with native objects
-             * of the application, whatever they are and without modification
-             */
-            wrapObject : function(path, object, father) {
-                var wrapper = this.wrapCache[path];
-                if (wrapper) {
-                    return wrapper;
-                }
-                else {
-                    if (object.wrapObject) {
-                        this.wrapCache[path] = object.wrapObject(object, path, this, father);
-                        return this.wrapCache[path];
-                    }
-                    if (father && (father.wrapSon)) {
-                        this.wrapCache[path] = father.wrapSon(object, path, this, father);
-                        return this.wrapCache[path];
-                    }
-                    this.wrapCache[path] = this.defaultWrapper(object, path, this, father);
-                    return this.wrapCache[path];
-                }
-            },
-
-            /**
+             * @function
+             * @instance
+             * @description
              * Internal function that manually parses the access path to an object
              * @private
              */
@@ -506,6 +594,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Internal function that extracts last element of the path considered as (generalized) attribute
              * @private
              */
@@ -515,6 +606,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              *  Internal function to extract an expression with an offset in a value string
              * @private
              */
@@ -550,6 +644,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * Internal function to compute a value from an expression, potentially recursive
              * @private
              */
@@ -638,6 +735,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * General entry point in charge of retrieving a value from a path or an expression <br/>
              * <br/>
              * The general form of such expression is either <br/>
@@ -684,6 +784,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * General entry point to set a value to a path
              */
             setValue : function(path,value) {
@@ -694,6 +797,9 @@ enioka.rules = (
             },
 
             /**
+             * @function
+             * @instance
+             * @description
              * General entry point to add a value to a path
              * It is not the same as previous  it will force specified path to be an array of values
              */
@@ -707,6 +813,7 @@ enioka.rules = (
             // As a matter of fact, the context itself is a wrapped object as well
             // as such it provides uniform access to all objects, by providing
             // their "virtual" access root path
+            // This is hidden from public interface documentation because an internal's
             getAttributeValue : function (attribute) {
                 return this.values[attribute];
             },
@@ -727,29 +834,146 @@ enioka.rules = (
                         return this.values[attribute];
                     }
                 }
+            },
+            
+            wrapObject : function(path, object, father) {
+                var wrapper = this.wrapCache[path];
+                if (wrapper) {
+                    return wrapper;
+                }
+                else {
+                    if (object.wrapObject) {
+                        this.wrapCache[path] = object.wrapObject(object, path, this, father);
+                        return this.wrapCache[path];
+                    }
+                    if (father && (father.wrapSon)) {
+                        this.wrapCache[path] = father.wrapSon(object, path, this, father);
+                        return this.wrapCache[path];
+                    }
+                    this.wrapCache[path] = this.defaultWrapper(object, path, this, father);
+                    return this.wrapCache[path];
+                }
             }
         };
         RuleContext = Class.create(RuleContext);
+        
+        /**
+         * @interface
+         * @memberof enioka.rules
+         * @classdesc
+         * <br/>
+         * <br/>
+         * A Rule Element is a part used in a rule definition.
+         */
+        var RuleElement = {
+                initialize : function(properties) {
+                }
+        };
+        RuleElement = Class.create(RuleElement);
 
+        /**
+         * @interface
+         * @memberof enioka.rules
+         * @extends enioka.rules.RuleElement
+         * @classdesc
+         * <br/>
+         * <br/>
+         * A Rule Condition is a Rule Element that hold conditions of a rule. A number of predefined conditions
+         * are built in in the core rules implementation: <br/>
+         * - {@link enioka.rules.conditions.NOT} <br/>
+         * - {@link enioka.rules.conditions.OR} <br/>
+         * - {@link enioka.rules.conditions.AND} <br/>
+         * - {@link enioka.rules.conditions.ISNULL} <br/>
+         * - {@link enioka.rules.conditions.LESS} <br/>
+         * - {@link enioka.rules.conditions.MORE} <br/>
+         * - {@link enioka.rules.conditions.MATCHES} <br/>
+         * - {@link enioka.rules.conditions.EQUALS} <br/>
+         * - {@link enioka.rules.conditions.LIKE} <br/>
+         * One may extend these predefined conditions by providing additional condition handlers at engine initialization.
+         * It is as simple as providing either a named set of classs with the specified RuleCondition interface, with the handler
+         * interface or simply of functions with the proper interface.
+         */
+        var RuleCondition = {
+                initialize : function(properties) {
+                }
+        };
+        RuleCondition = Class.create(RuleCondition, RuleElement);
+
+        /**
+         * @interface
+         * @memberof enioka.rules
+         * @extends enioka.rules.RuleElement
+         * @classdesc
+         * <br/>
+         * <br/>
+         * A Rule Action is a Rule Element that hold actions of a rule. A number of predefined actions
+         * are built in in the core rules implementation: <br/>
+         * - {@link enioka.rules.actions.LOG}, {@link enioka.rules.actions.LOG_USER}  <br/>
+         * - {@link enioka.rules.actions.SET}, {@link enioka.rules.actions.DSET}  <br/>
+         * - {@link enioka.rules.actions.ADD}, {@link enioka.rules.actions.DADD} <br/>
+         * - {@link enioka.rules.actions.CLEAR}, {@link enioka.rules.actions.DCLEAR} <br/>
+         * - {@link enioka.rules.actions.SET_TEXT}<br/>
+         * - {@link enioka.rules.actions.ADD_TEXT}<br/>
+         * - {@link enioka.rules.actions.SET_OBJECT}<br/>
+         * - {@link enioka.rules.actions.ADD_OBJECT}<br/>
+         * - {@link enioka.rules.actions.RECURSE}<br/>
+         * - {@link enioka.rules.actions.CHOOSE}<br/>
+         * - {@link enioka.rules.actions.CONTROL}<br/>
+         * One may extend these predefined actions by providing additional action handlers at engine initialization.
+         * It is as simple as providing either a named set of classs with the specified RuleAction interface, with the handler
+         * interface or simply of functions with the proper interface.
+         */
+        var RuleAction = {
+                initialize : function(properties) {
+                }
+        };
+        RuleAction = Class.create(RuleAction, RuleElement);
+
+        /**
+         * @interface
+         * @memberof enioka.rules
+         * @extends enioka.rules.RuleElement
+         * @classdesc
+         * <br/>
+         * <br/>
+         * A Rule Function is a Rule Element that hold functions of a rule. A number of predefined functions
+         * are built in in the core rules implementation: <br/>
+         * - {@link enioka.rules.functions.catenate}  <br/>
+         * - {@link enioka.rules.functions.print}  <br/>
+         * - {@link enioka.rules.functions.add}  <br/>
+         * - {@link enioka.rules.functions.div}  <br/>
+         * - {@link enioka.rules.functions.minus}  <br/>
+         * One may extend these predefined actions by providing additional function handlers at engine initialization.
+         * It is as simple as providing either a named set of classs with the specified RuleFunction interface, with the handler
+         * interface or simply of functions with the proper interface.
+         */
+        var RuleFunction = {
+                initialize : function(properties) {
+                }
+        };
+        RuleFunction = Class.create(RuleFunction, RuleElement);
+
+
+        /**
+         * @memberof enioka.rules
+         * @class
+         * @classdesc
+         * This class represents the rules objects of the engine. These objects are directly mapped
+         * against their XML source, without (for the moment) compilation to an alternative form
+         * more efficient or convenient for execution. <br/>
+         * <br/>
+         * This class is not exposed either to the client API. It is only "seen" from the client
+         * application as an XML object that customizes the behaviour of the engine in a
+         * "declarative" form. <br/>
+         *
+         * @description This this takes an XML source code rule and registers "fast" access to the conditions
+         * actions and subrules. It does propagate the rule creation to embedded rules as well.
+         * See Rule syntax in documentation for further information on rule syntax.
+         * @param ruleXML The source code for the rule as an XML object
+         * @param father The embedding father rule if any (as an object)
+         * @param id The unique id allocated to identify this rule (integer counter).
+         */
         var Rule = {
-            /**
-             * @class
-             * This class represents the rules objects of the engine. These objects are directly mapped
-             * against their XML source, without (for the moment) compilation to an alternative form
-             * more efficient or convenient for execution. <br/>
-             * <br/>
-             * This class is not exposed either to the client API. It is only "seen" from the client
-             * application as an XML object that customizes the behaviour of the engine in a
-             * "declarative" form. <br/>
-             *
-             * @constructs
-             * @description This this takes an XML source code rule and registers "fast" access to the conditions
-             * actions and subrules. It does propagate the rule creation to embedded rules as well.
-             * See Rule syntax in documentation for further information on rule syntax.
-             * @param ruleXML The source code for the rule as an XML object
-             * @param father The embedding father rule if any (as an object)
-             * @param id The unique id allocated to identify this rule (integer counter).
-             */
             initialize : function(ruleXML, father, id) {
 //                info_debug('Creating rule ', id , ruleXML);
                 this.id = id;
@@ -898,36 +1122,41 @@ enioka.rules = (
                     return "result";
             }
         };
-
         Rule = Class.create(Rule);
 
+        /**
+         * @memberof enioka.rules
+         * @class
+         * @classdesc
+         * This class provides the core mechanism for efficiently indexing rules by their
+         * use of optimized conditions. When an optimized condition is used of the form key=value
+         * all rules that reference the value found in context for this key can be retrieved
+         * efficiently without scanning all rules one by one.
+         * <br/>
+         * <br/>
+         * This class is internal only.
+         * <br/>
+         * <br/>
+         * This class coule be further enhanced to provide fast access to candidate rules beyond
+         * optimized conditions only... (ultimately a "xrete" like network would be the solution).
+         * Still this indexing technique as is is independent of worl values, which is a significant
+         * benefit and drastically indexing work for each fact scanned, when they are submitted
+         * one by one (or internally scanned through the CHOOSE operator).
+         *
+         * @description Does not do a thing...
+         */
         var RuleIndex = {
-            /**
-             * @class
-             * This class provides the core mechanism for efficiently indexing rules by their
-             * use of optimized conditions. When an optimized condition is used of the form key=value
-             * all rules that reference the value found in context for this key can be retrieved
-             * efficiently without scanning all rules one by one.
-             * <br/>
-             * <br/>
-             * This class is internal only.
-             * <br/>
-             * <br/>
-             * This class coule be further enhanced to provide fast access to candidate rules beyond
-             * optimized conditions only... (ultimately a "xrete" like network would be the solution).
-             * Still this indexing technique as is is independent of worl values, which is a significant
-             * benefit and drastically indexing work for each fact scanned, when they are submitted
-             * one by one (or internally scanned through the CHOOSE operator).
-             *
-             * @constructs
-             * @description Does not do a thing...
-             */
             initialize : function() {
             },
 
             /**
+             * @instance
+             * @description
              * This is the major algorithm to build the index of all rules. <br/>
              * The index is a recursive data structure that "points" to the matching rules.
+             * @param {Array} keys - array of keys
+             * @param {int} index - index in the keys
+             * @param {enioka.rules.Rule} rule - rule to add to the index
              */
             addRule : function(keys, index, rule) {
                 // Check if index tree is at a leaf
@@ -995,6 +1224,8 @@ enioka.rules = (
             },
 
             /**
+             * @instance
+             * @description
              * Collect all rules that are a fit to the provided context
              * @param context The context to use for checking rules
              * @param keys The array of keys that structure the tree
@@ -1050,6 +1281,13 @@ enioka.rules = (
                 return;
             },
             
+            /** 
+             * @instance
+             * @description
+             * Perform rules index optimization to reduce overhead of the runtime scan of the index
+             * For the moment detects only the leaf with no actions.
+             * Should make possible direct jumps to proper rules without lengthy intermediate scan of index
+             */
             optimize : function() {
                 this.hasActions = false;
                 if (this.rules && this.rules.length) {
@@ -1081,27 +1319,28 @@ enioka.rules = (
 
         RuleIndex = Class.create(RuleIndex);
 
+        /**
+         * @memberof enioka.rules
+         * @class
+         * @classdesc
+         * This class provides all access to the rule engine and its
+         * associated functionality. Which is, by the way trivial: apply rules and return the
+         * result created by the rules.
+         * <br/>
+         * <br/>
+         * It has for the moment two main entry points:<br/>
+         * - the constructor to initialize the rule engine with the rules<br/>
+         * - the applyRules to apply the rules to a given context<br/>
+         * @param properties The elements to customize the engine. For the moment the
+         * following attributes are supported : <br/>
+         * - rules : the rules as an XML fragment <RULES> <RULE />* </RULES>  <br/>
+         * - conditionHandlers : the conition handlers to extend core conditions defined <br/>
+         * - actionHandlers : the action handlers to extend core actions defined <br/>
+         * - functionHandlers : the function handlers to extend core functions defined <br/>
+         * @description The constructor is in charge of building all data structures
+         * from the specified rules and then make possible the use of the rules.
+         */
         var RuleEngine = {
-            /**
-             * @class
-             * This class provides all access to the rule engine and its
-             * associated functionality. Which is, by the way trivial: apply rules and return the
-             * result created by the rules.
-             * <br/>
-             * <br/>
-             * It has for the moment two main entry points:<br/>
-             * - the constructor to initialize the rule engine with the rules<br/>
-             * - the applyRules to apply the rules to a given context<br/>
-             * @constructs
-             * @description The constructor is in charge of building all data structures
-             * from the specified rules and then make possible the use of the rules.
-             * @param properties The elements to customize the engine. For the moment the
-             * following attributes are supported : <br/>
-             * - rules : the rules as an XML fragment <RULES> <RULE />* </RULES>  <br/>
-             * - conditionHandlers : the conition handlers to extend core conditions defined <br/>
-             * - actionHandlers : the action handlers to extend core actions defined <br/>
-             * - functionHandlers : the function handlers to extend core functions defined <br/>
-             */
             initialize : function(properties) {
                 if (properties) {
                     if (properties.info_debug || properties.warn_debug || properties.error_debug ||
@@ -1187,6 +1426,19 @@ enioka.rules = (
 
             initConditionHandlers : function (properties) {
                 this.conditionHandlers = new Object();
+                /**
+                 * @namespace enioka.rules.conditions
+                 * @description This namespace holds predefined conditions to use in rules.
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name AND
+                 * @description This condition ands the embedded conditions in this condition object
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.AND = function(context,condition) {
                     if (condition.tagName == "AND") {
                         var conditions = condition.childNodes;
@@ -1200,6 +1452,15 @@ enioka.rules = (
                         return true;
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name NOT
+                 * @description This condition negates the embedded conditions in this condition object
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.NOT = function(context,condition) {
                     if (condition.tagName == "NOT") {
                         var conditions = condition.childNodes;
@@ -1213,6 +1474,15 @@ enioka.rules = (
                         return true;
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name OR
+                 * @description This condition ors the embedded conditions in this condition object
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.OR = function(context,condition) {
                     if (condition.tagName == "OR") {
                         var conditions = condition.childNodes;
@@ -1226,6 +1496,15 @@ enioka.rules = (
                         return false;
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name MATCHES
+                 * @description This condition is true if the specified path matches the specified pattern
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.MATCHES = function(context,condition) {
                     if (condition.tagName == "MATCHES") {
                         var attributes = condition.attributes;
@@ -1250,6 +1529,15 @@ enioka.rules = (
                         }
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name EQUALS
+                 * @description This condition is true if the specified paths of values are equal
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.EQUALS = function(context,condition) {
                     if (condition.tagName == "EQUALS") {
                         var value1 = context.getValue(condition.getAttribute("value1"));
@@ -1257,12 +1545,30 @@ enioka.rules = (
                         return value1 == value2;
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name ISNULL
+                 * @description This condition is true if the specified path is null
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.ISNULL = function(context,condition) {
                     if (condition.tagName == "ISNULL") {
                         var value = context.getValue(condition.getAttribute("value"));
                         return ((typeof(value) == "undefined") || (value == null));
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name INTERSECTS
+                 * @description This condition is true if the specified paths of values are two arrays with values in common
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.INTERSECTS = function(context,condition) {
                     if (condition.tagName == "INTERSECTS") {
                         var value1 = context.getValue(condition.getAttribute("value1"));
@@ -1270,6 +1576,15 @@ enioka.rules = (
                         return intersection(value1, value2);
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name LESS
+                 * @description This condition is true if the first specified path of values is strictly less to second
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.LESS = function(context,condition) {
                     if (condition.tagName == "LESS") {
                         var value1 = context.getValue(condition.getAttribute("value1"));
@@ -1277,6 +1592,15 @@ enioka.rules = (
                         return value1 < value2;
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name MORE
+                 * @description This condition is true if the first specified path of values is strictly more to second
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.MORE = function(context,condition) {
                     if (condition.tagName == "MORE") {
                         var value1 = context.getValue(condition.getAttribute("value1"));
@@ -1284,6 +1608,15 @@ enioka.rules = (
                         return value1 > value2;
                     }
                 };
+                /**
+                 * @function
+                 * @static
+                 * @name LIKE
+                 * @description This condition is true if the first specified path of values is like to second
+                 * @memberof enioka.rules.conditions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 */
                 this.conditionHandlers.LIKE = function(context,condition) {
                     if (condition.tagName == "LIKE") {
                         var value1 = context.getValue(condition.getAttribute("value1"));
@@ -1308,6 +1641,19 @@ enioka.rules = (
 
             initFunctionHandlers : function (properties) {
                 this.functionHandlers = new Object();
+                /**
+                 * @namespace enioka.rules.functions
+                 * @description This namespace holds predefined functions to use in rules.
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name print
+                 * @description This function prints the values passed in the info_debug interface.
+                 * @memberof enioka.rules.functions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {Array} args - the args passed to the function
+                 */
                 this.functionHandlers.print = function(context, args) {
                     var result = "";
                     for (var i = 1; i < args.length; i++) {
@@ -1316,7 +1662,16 @@ enioka.rules = (
                     info_debug("PRINT [" + result + "]");
                     return result;
                 };
-
+                
+                /**
+                 * @function
+                 * @static
+                 * @name catenate
+                 * @description This function catenates the values passed in a global string.
+                 * @memberof enioka.rules.functions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {Array} args - the args passed to the function
+                 */
                 this.functionHandlers.catenate = function(context, args) {
                     var result = "";
                     for (var i = 1; i < args.length; i++) {
@@ -1324,7 +1679,16 @@ enioka.rules = (
                     }
                     return result;
                 };
-
+                
+                /**
+                 * @function
+                 * @static
+                 * @name add
+                 * @description This function adds the values passed.
+                 * @memberof enioka.rules.functions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {Array} args - the args passed to the function
+                 */
                 this.functionHandlers.plus = function(context, args) {
                     var result = 0;
                     for (var i = 1; i < args.length; i++) {
@@ -1332,7 +1696,16 @@ enioka.rules = (
                     }
                     return result;
                 };
-
+                
+                /**
+                 * @function
+                 * @static
+                 * @name mul
+                 * @description This function multiplies the values passed.
+                 * @memberof enioka.rules.functions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {Array} args - the args passed to the function
+                 */
                 this.functionHandlers.mul = function(context, args) {
                     var result = 1;
                     for (var i = 1; i < args.length; i++) {
@@ -1341,6 +1714,15 @@ enioka.rules = (
                     return result;
                 };
 
+                /**
+                 * @function
+                 * @static
+                 * @name div
+                 * @description This function divides the first value by the other values passed.
+                 * @memberof enioka.rules.functions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {Array} args - the args passed to the function
+                 */
                 this.functionHandlers.div = function(context, args) {
                     var result = parseFloat(args[1]);
                     if (args.length > 2) {
@@ -1354,6 +1736,15 @@ enioka.rules = (
                     return result;
                 };
 
+                /**
+                 * @function
+                 * @static
+                 * @name minus
+                 * @description This function substracts the values to the first passed.
+                 * @memberof enioka.rules.functions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {Array} args - the args passed to the function
+                 */
                 this.functionHandlers.minus = function(context, args) {
                     var result = parseFloat(args[1]);
                     if (args.length > 2) {
@@ -1390,6 +1781,20 @@ enioka.rules = (
 
             initActionHandlers : function (properties) {
                 this.actionHandlers = new Object();
+                /**
+                 * @namespace enioka.rules.actions
+                 * @description This namespace holds predefined conditions to use in rules.
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name LOG
+                 * @description This action LOGS the specified message in the info_XXX interface specified.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
                 this.actionHandlers.LOG = function(context, action, rule) {
                     if (action.tagName == "LOG") {
                         var message = context.getEngine()._getMessage(context, action) ;
@@ -1402,7 +1807,16 @@ enioka.rules = (
                         }
                     }
                 };
-
+                /**
+                 * @function
+                 * @static
+                 * @name LOG_USER
+                 * @description This action LOGS the specified message in the user_XXX interface specified.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
                 this.actionHandlers.LOG_USER = function(context, action, rule) {
                     if (action.tagName == "LOG_USER") {
                         var message = context.getEngine()._getMessage(context, action) ;
@@ -1415,7 +1829,36 @@ enioka.rules = (
                         }
                     }
                 };
-
+                /**
+                 * @function
+                 * @static
+                 * @name SET
+                 * @description This action SETS the specified path to the specified value.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name ADD
+                 * @description This action ADDS the specified path to the specified value.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name CLEAR
+                 * @description This action CLEARS the specified path.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
                 var assignHandler = function (context, action, rule) {
                     if ((action.tagName == "SET") || (action.tagName == "ADD") || (action.tagName == "CLEAR")) {
                         var attributes = action.attributes;
@@ -1460,6 +1903,26 @@ enioka.rules = (
                 this.actionHandlers.ADD = assignHandler;
                 this.actionHandlers.CLEAR = assignHandler;
 
+                /**
+                 * @function
+                 * @static
+                 * @name SET_TEXT
+                 * @description This action SETS the specified path to the specified text.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name ADD_TEXT
+                 * @description This action ADDS to the specified path the specified text.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
                 var textAssignHandler = function (context, action, rule) {
                     if ((action.tagName == "SET_TEXT") || (action.tagName == "ADD_TEXT")) {
                         var path = context.getValue(action.getAttribute("path"));
@@ -1509,7 +1972,37 @@ enioka.rules = (
                 this.actionHandlers.SET_TEXT = textAssignHandler;
                 this.actionHandlers.ADD_TEXT = textAssignHandler;
 
-                var dassignHandler = function (context, action, rule) {
+                /**
+                 * @function
+                 * @static
+                 * @name DSET
+                 * @description This action SETS the dynamic specified path to the specified value.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name DADD
+                 * @description This action ADDS the dynamic specified path to the specified value.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name DCLEAR
+                 * @description This action CLEARS the dynamic specified path.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                 var dassignHandler = function (context, action, rule) {
                     if ((action.tagName == "DSET") || (action.tagName == "DADD") || (action.tagName == "DCLEAR")) {
                         var path = context.getValue(action.getAttribute("path"));
                         if (path){
@@ -1546,6 +2039,26 @@ enioka.rules = (
                 this.actionHandlers.DADD = dassignHandler;
                 this.actionHandlers.DCLEAR = dassignHandler;
                 
+                /**
+                 * @function
+                 * @static
+                 * @name SET_OBJECT
+                 * @description This action SETS the specified path to the specified object with the specified object attributes.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                /**
+                 * @function
+                 * @static
+                 * @name ADD_OBJECT
+                 * @description This action ADDS to the specified path the specified object with the specified object attributes.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
                 var objectHandler = function (context, action, rule) {
                     if ((action.tagName == "SET_OBJECT") || (action.tagName == "ADD_OBJECT")) {
                         var attributes = action.attributes;
@@ -1652,7 +2165,16 @@ enioka.rules = (
                 this.actionHandlers.SET_OBJECT = objectHandler;
                 this.actionHandlers.ADD_OBJECT = objectHandler;
 
-
+                /**
+                 * @function
+                 * @static
+                 * @name CONTROL
+                 * @description This action CONTROLS the engine, by executing the specifed action and priority.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
                 this.actionHandlers.CONTROL = function (context, action, rule) {
                     if (action.tagName == "CONTROL") {
                         var control = context.getValue(action.getAttribute("action"));
@@ -1664,13 +2186,34 @@ enioka.rules = (
                     }
                 };
 
-                this.actionHandlers.RECURSE = function(context,action, rule) {
+                /**
+                 * @function
+                 * @static
+                 * @name RECURSE
+                 * @description This action launches a new loop for the engine with all the data of the current context.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
+                this.actionHandlers.RECURSE = function(context, action, rule) {
                     if (action.tagName == "RECURSE") {
                         var engine = context.getEngine();
                         engine.run(context);
                     }
                 };
 
+                /**
+                 * @function
+                 * @static
+                 * @name CHOOSE
+                 * @description This action launches a new context for the engine on the current context populated
+                 * with the values of the different actions embedded in this CHOOSE action.
+                 * @memberof enioka.rules.actions
+                 * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
+                 * @param {enioka.rules.RuleAction} action - the action object passed to the rule
+                 * @param {enioka.rules.Rule} rule - the current scanned rule passed
+                 */
                 this.actionHandlers.CHOOSE = function(context,action, rule) {
                     if (action.tagName == "CHOOSE") {
                         var attributes = action.attributes;
@@ -1930,6 +2473,7 @@ enioka.rules = (
             },
 
             /**
+             * @instance
              * The actual (only) entry point to the engine.
              * @param context The context to use to apply the rules
              * @return The context "result", ie whatever has been created by the rules
@@ -1943,27 +2487,23 @@ enioka.rules = (
         };
 
         RuleEngine = Class.create(RuleEngine);
+        
 
+
+
+        /**
+         * @memberof enioka.rules
+         * @class
+         * @implements {enioka.rules.IRuleFact}
+         * @classdesc
+         * Core wrapper class for input facts when "internal representation is to be used".
+         * <br/> <br/>
+         * This class is for internal facts.
+         * @description The constructor takes a raw object as an input and copies over all of its
+         * own properties.
+         * @param {object} properties - the raw object to use to set attributes of fact
+         */
         var RuleFact = {
-            /**
-             * @class
-             * Core wrapper class for input facts when "internal representation is to be used".
-             * <br/> <br/>
-             * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
-             * simple: get, set and add attribute value. If they do not support this access process, then
-             * they must be "wrapped" by a wrapper object that will take care to make "as if" the
-             * objects did indeed follow this API.
-             * <br/> <br/>
-             * 3 built in wrappers are provided : <br/>
-             * - simple "internal" class to represent facts if not specified by client application <br/>
-             * - simple "external" class to represent facts provided by client applications, without
-             * knowing exactlty what they are <br/>
-             * - simple "result" class to represent info produced by default by the engine and to be
-             * used by client applications as a default to retrieve "results" returned by the engine
-             * <br/> <br/>
-             * This class is for internal facts.
-             * @constructs
-             */
             initialize : function(properties) {
                 for (var name in properties) {
                     if (properties.hasOwnProperty(name)) {
@@ -1971,103 +2511,32 @@ enioka.rules = (
                     }
                 }
             },
-
-            /**
-             * Gets the value of the specified attribute
-             * @param attribute The name of the attribute
-             */
-            getAttributeValue : function (attribute) {
-                return this[attribute];
-            },
-
-            /**
-             * Sets the value of the specified attribute with
-             * specified value.
-             * @param attribute The name of the attribute
-             * @param value The value to set to the attribute
-             */
-            setAttributeValue : function (attribute,value) {
-                return this[attribute] = value;
-            },
-
-            /**
-             * Sets the value of the specified attribute with
-             * specified value.
-             * @param attribute the name of the attribute
-             * @param value the value to set to the attribute
-             */
-            addAttributeValue : function (attribute,value) {
-                if (this[attribute]) {
-                    if (this[attribute] instanceof Array) {
-                        this[attribute].push(value);
-                    }
-                    else {
-                        info_debug('Error : attribute is not a array : should not access it with add', this);
-                        info_debug('Warning : attribute converted to array');
-                        var tab = new Array();
-                        tab.push(this[attribute]);
-                        tab.push(value);
-                        this[attribute] = tab;
-                    }
-                }
-                else {
-                    var tab = new Array();
-                    tab.push(value);
-                    return this[attribute] = tab;
-                }
-            },
-
-            /**
-             * Wraps object accessible through this path. If provided,
-             * this method will either create a wrapper object or return the object itself
-             * if this object has no need to be wrapped at all
-             * @param object The object to wrap
-             * @param path The current access path to this object
-             * @param context The context in which access is performed, useful to retrieve
-             * initial context information useful to actually access to the object data
-             * @param father The object from which one tries to access this very object
-             */
-            wrapObject: function (object, path, context, father) {
-                return this;
-            }
         };
+        RuleFact = Class.create(IRuleFact, RuleFact);
 
-        RuleFact = Class.create(RuleFact);
 
-
+        /**
+         * @memberof enioka.rules
+         * @class
+         * @extends enioka.rules.RuleFact
+         * @implements enioka.rules.IRuleFact
+         * @classdesc
+         * Core wrapper class for input facts when "internal representation is to be used".
+         * This class is for default external facts.
+         * @param object
+         * @param path
+         * @param context
+         * @param father
+         */
         var RuleExternalObject = {
-            /**
-             * @class
-             * Core wrapper class for input facts when "internal representation is to be used".
-             * <br/>
-             * <br/>
-             * Objects must, to be "accessible" by the rule engine, obey an API, which is rather
-             * simple: get, set and add attribute value. If they do not support this access process, then
-             * they must be "wrapped" by a wrapper object that will take care to make "as if" the
-             * objects did indeed follow this API.
-             * <br/>
-             * <br/>
-             * 3 built-in wrappers are provided: <br/>
-             * - simple "internal" class to represent facts if not specified by client application <br/>
-             * - simple "external" class to represent facts provided by client applications, without
-             * knowing exactlty what they are <br/>
-             * - simple "result" class to represent info produced by default by the engine and to be
-             * used by client applications as a default to retrieve "results" returned by the engine
-             * <br/>
-             * <br/>
-             * This class is for default external facts.
-             * @constructs
-             * @param object
-             * @param path
-             * @param context
-             * @param father
-             */
+
             initialize : function(object, path, context, father) {
                 this.object = object;
             },
 
             /**
-             *
+             * @instance
+             * @override
              */
             getAttributeValue : function (attribute) {
                 if (this.object) {
@@ -2085,7 +2554,8 @@ enioka.rules = (
             },
 
             /**
-             *
+             * @instance
+             * @override
              */
             setAttributeValue : function (attribute,value) {
                 if (this.object) {
@@ -2103,7 +2573,8 @@ enioka.rules = (
             },
 
             /**
-             *
+             * @instance
+             * @override
              */
             addAttributeValue : function (attribute,value) {
                 if (this.object) {
@@ -2118,26 +2589,15 @@ enioka.rules = (
                 }
             }
         };
-
         RuleExternalObject = Class.extend(RuleFact, RuleExternalObject);
 
 
         /**
+         * @memberof enioka.rules
          * @class
-         * Objects must , to be "accessible" by the rule engine, obey an API, which is rather
-         * simple : get, set and add attribute value. If they do not support this access process, then
-         * they must be "wrapped" by a wrapper object that will take care to make "as if" the
-         * objects did indeed follow this API.
-         * <br/>
-         * <br/>
-         * 3 built in wrappers are provided :
-         * - simple "internal" class to represent facts if not specified by client application <br/>
-         * - simple "external" class to represent facts provided by client applications, without
-         * knowing exactlty what they are  <br/>
-         * - simple "result" class to represent info produced by default by the engine and to be
-         * used by client applications as a default to retrieve "results" returned by the engine
-         * <br/>
-         * <br/>
+         * @extends enioka.rules.RuleFact
+         * @implements enioka.rules.IRuleFact
+         * @classdesc
          * This class is for facts created by the engine.
          */
         var RuleResult = {
@@ -2153,9 +2613,7 @@ enioka.rules = (
             }
 
         };
-
-        RuleResult = Class.extend(RuleFact,
-                                  RuleResult);
+        RuleResult = Class.extend(RuleFact, RuleResult);
 
         // Eventually expose a (very) limited interface
         // Rule Engine for starting it all and executing engine
@@ -2165,11 +2623,34 @@ enioka.rules = (
         eniokarules.RuleContext = RuleContext;
 
         // Three predefined classes as portential wrappers to derive from
+        /**
+         * @member
+         * @memberof enioka.rules
+         * @description provides access to this class {@link enioka.rules.RuleFact} to derive from.
+         */
         eniokarules.RuleFact = RuleFact;
+        /**
+         * @member
+         * @memberof enioka.rules
+         * @description provides access to this class {@link enioka.rules.RuleExternalObject} to derive from.
+         */
         eniokarules.RuleExternalObject = RuleExternalObject;
+        /**
+         * @member
+         * @memberof enioka.rules
+         * @description provides access to this class {@link enioka.rules.RuleResult} to derive from.
+         */
         eniokarules.RuleResult = RuleResult;
 
         // And the capability to extend these predefined classes
+        /**
+         * @function
+         * @memberof enioka.rules
+         * @description use this method to subclass a builtin class to subclass from
+         * @param fatherClass : class to derive from
+         * @param functions : set of functions in an object to use as methods for the son class
+         * @returns the resulting class object to use to build objects.
+         */
         eniokarules.extend = Class.extend;
 
         // That's all

@@ -1,289 +1,99 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf8" />
-		
-		<title>JsDoc Reference - Index</title>
-		<meta name="generator" content="JsDoc Toolkit" />
-		
-		<style type="text/css">
-		/* default.css */
-body
-{
-	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
-	width: 800px;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
 
-.header
-{
-	clear: both;
-	background-color: #ccc;
-	padding: 8px;
-}
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
 
-h1
-{
-	font-size: 150%;
-	font-weight: bold;
-	padding: 0;
-	margin: 1em 0 0 .3em;
-}
+<body>
 
-hr
-{
-	border: none 0;
-	border-top: 1px solid #7F8FB1;
-	height: 1px;
-}
+<div id="main">
 
-pre.code
-{
-	display: block;
-	padding: 8px;
-	border: 1px dashed #ccc;
-}
+    <h1 class="page-title">Home</h1>
 
-#index
-{
-	margin-top: 24px;
-	float: left;
-	width: 160px;
-	position: absolute;
-	left: 8px;
-	background-color: #F3F3F3;
-	padding: 8px;
-}
+    
 
-#content
-{
-	margin-left: 190px;
-	width: 600px;
-}
 
-.classList
-{
-	list-style-type: none;
-	padding: 0;
-	margin: 0 0 0 8px;
-	font-family: arial, sans-serif;
-	font-size: 1em;
-	overflow: auto;
-}
 
-.classList li
-{
-	padding: 0;
-	margin: 0 0 8px 0;
-}
+    
 
-.summaryTable { width: 100%; }
 
-h1.classTitle
-{
-	font-size:170%;
-	line-height:130%;
-}
+    <h3> </h3>
 
-h2 { font-size: 110%; }
-caption, div.sectionTitle
-{
-	background-color: #7F8FB1;
-	color: #fff;
-	font-size:130%;
-	text-align: left;
-	padding: 2px 6px 2px 6px;
-	border: 1px #7F8FB1 solid;
-}
 
-div.sectionTitle { margin-bottom: 8px; }
-.summaryTable thead { display: none; }
 
-.summaryTable td
-{
-	vertical-align: top;
-	padding: 4px;
-	border-bottom: 1px #7F8FB1 solid;
-	border-right: 1px #7F8FB1 solid;
-}
 
-/*col#summaryAttributes {}*/
-.summaryTable td.attributes
-{
-	border-left: 1px #7F8FB1 solid;
-	width: 140px;
-	text-align: right;
-}
 
-td.attributes, .fixedFont
-{
-	line-height: 15px;
-	color: #002EBE;
-	font-family: "Courier New",Courier,monospace;
-	font-size: 13px;
-}
 
-.summaryTable td.nameDescription
-{
-	text-align: left;
-	font-size: 13px;
-	line-height: 15px;
-}
 
-.summaryTable td.nameDescription, .description
-{
-	line-height: 15px;
-	padding: 4px;
-	padding-left: 4px;
-}
 
-.summaryTable { margin-bottom: 8px; }
 
-ul.inheritsList
-{
-	list-style: square;
-	margin-left: 20px;
-	padding-left: 0;
-}
 
-.detailList {
-	margin-left: 20px; 
-	line-height: 15px;
-}
-.detailList dt { margin-left: 20px; }
+    
 
-.detailList .heading
-{
-	font-weight: bold;
-	padding-bottom: 6px;
-	margin-left: 0;
-}
 
-.light, td.attributes, .light a:link, .light a:visited
-{
-	color: #777;
-	font-style: italic;
-}
 
-.fineprint
-{
-	text-align: right;
-	font-size: 10px;
-}
-		</style>
-	</head>
-	
-	<body>
-		<div id="header">
+
+    <section>
+        <article><p><strong>rules.js</strong> is a lightweight tool that provides rule based style customizing to javascript based applications 
+that need to process &quot;events&quot; incrementally. The tool is born from the need for own enioka modelling tool to 
+specify in models their visual presentation or their semantic properties or the generation of derived elements 
+in models. Javascript being the general client and server side customization context, the tool is implemented in 
+javascript and therefore is supposed to run on both server or client environments.</p>
+<p>It is intended to stay <strong>small</strong> and to address <strong>medium size</strong> sets of data. It still aims to avoid a brute force
+approach of a scan of all rules for each event to process. A first simple algorithm is implemented that builds 
+an index from the text of the rules. The rules are implemented as a mix of XML and javascript objects. The source 
+of the rules is in XML, and it is somewhat &quot;transformed&quot; and &quot;indexed&quot; upon initialization of the engine.  </p>
+<p>The engine connects to the internal environment through the notion of <strong>wrappers</strong> that provide access to the engine
+to external information (either in read or in write access) of the client application. In the most naive 
+integration, simple flat objects can be used, but no copy is actually needed to let the engine &quot;reason&quot; 
+about <strong>native applications' objects</strong>. One can for instance &quot;reason&quot; about json objects, html parts 
+or whatever javascript object in a uniform syntax, even if objects are heterogeneous. The idea of the engine 
+is to rely heavily on the external objects &quot;native&quot; indexes and interralation capabilities rather than imposing 
+an own indexing technique (as a rete network)).</p>
+<p>The engine is <strong>called by the application</strong> by providing a <strong>context</strong> that the engine will process, reason upon, 
+and produce derivative &quot;conclusions&quot; whatever they are. It can be actual <strong>results</strong> as html fragments, it can 
+be <strong>side effects</strong> as updates to the context to derive property values of supplied objects, it can be 
+<strong>new objects</strong> created as a consequence of the provided context.</p>
+<p>The idea of the engine is that it will fire <strong>whatever rule that meets its conditions</strong> and possibly all of them. 
+Depending on the use case and the complexity of the problem, the engine may <strong>simply fire once</strong> the (few) rules 
+that are relevant in the provided context and stop. But the overall processing can be <strong>more complex</strong> and 
+use priorities in rules, let rules control if the result has been met, or even iterate the engine on data 
+made accessible by the context by other rules. One can build rather elaborate rules and tasks with the 
+provided mechanisms. Still, the engine is <strong>not designed to perform algorithmic</strong> tasks, and it is a 
+more &quot;clever&quot; use to integrate the engine to an algorithm when this one can be more easily expressed in standard code. 
+The purpose is to express what is <strong>declarative in rules</strong>, and whatever is <strong>procedural in (javascript) code</strong>.</p>
+<p>The first release of the tool is very simple and basic, and will evolve with needs, to enhance control capabilities,
+expressiveness of rules, ease of use ... and more elaborate non regression test suite (based on jasmine) and 
+samples.</p></article>
+    </section>
+
+
+
+
+
+
 </div>
-		
-		<div id="index">
-			<div align="center"><a href="index.html">Class Index</a>
-| <a href="files.html">File Index</a></div>
-<hr />
-<h2>Classes</h2>
-<ul class="classList">
-	
-	<li><i><a href="symbols/_global_.html">_global_</a></i></li>
-	
-	<li><a href="symbols/enioka.html">enioka</a></li>
-	
-	<li><a href="symbols/enioka.rules.html">enioka.rules</a></li>
-	
-	<li><a href="symbols/enioka.rules-Rule.html">enioka.rules-Rule</a></li>
-	
-	<li><a href="symbols/enioka.rules-RuleContext.html">enioka.rules-RuleContext</a></li>
-	
-	<li><a href="symbols/enioka.rules-RuleEngine.html">enioka.rules-RuleEngine</a></li>
-	
-	<li><a href="symbols/enioka.rules-RuleExternalObject.html">enioka.rules-RuleExternalObject</a></li>
-	
-	<li><a href="symbols/enioka.rules-RuleFact.html">enioka.rules-RuleFact</a></li>
-	
-	<li><a href="symbols/enioka.rules-RuleIndex.html">enioka.rules-RuleIndex</a></li>
-	
-	<li><a href="symbols/enioka.rules-RuleResult.html">enioka.rules-RuleResult</a></li>
-	
-</ul>
-<hr />
-		</div>
-		
-		<div id="content">
-			<h1 class="classTitle">Class Index</h1>
-			
-			
-			<div>
-				<h2><a href="symbols/_global_.html">_global_</a></h2>
-				
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.html">enioka</a></h2>
-				enioka
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules.html">enioka.rules</a></h2>
-				enioka.rules
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules-Rule.html">enioka.rules-Rule</a></h2>
-				This class represents the rules objects of the engine.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules-RuleContext.html">enioka.rules-RuleContext</a></h2>
-				The Rule Context class
-<br/>
-<br/>
-The Rule Context is the way through which the engine holds grip on objects
-on which it performs its reasoning.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules-RuleEngine.html">enioka.rules-RuleEngine</a></h2>
-				This class provides all access to the rule engine and its
-associated functionality.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules-RuleExternalObject.html">enioka.rules-RuleExternalObject</a></h2>
-				Core wrapper class for input facts when "internal representation is to be used".
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules-RuleFact.html">enioka.rules-RuleFact</a></h2>
-				Core wrapper class for input facts when "internal representation is to be used".
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules-RuleIndex.html">enioka.rules-RuleIndex</a></h2>
-				This class provides the core mechanism for efficiently indexing rules by their
-use of optimized conditions.
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/enioka.rules-RuleResult.html">enioka.rules-RuleResult</a></h2>
-				Objects must , to be "accessible" by the rule engine, obey an API, which is rather
-simple : get, set and add attribute value.
-			</div>
-			<hr />
-			
-			
-		</div>
-		<div class="fineprint" style="clear:both">
-			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.4.0 on Tue Sep 11 2012 09:42:32 GMT+0200 (CEST)
-		</div>
-	</body>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="enioka.rules.Rule.html">Rule</a></li><li><a href="enioka.rules.RuleContext.html">RuleContext</a></li><li><a href="enioka.rules.RuleEngine.html">RuleEngine</a></li><li><a href="enioka.rules.RuleExternalObject.html">RuleExternalObject</a></li><li><a href="enioka.rules.RuleFact.html">RuleFact</a></li><li><a href="enioka.rules.RuleIndex.html">RuleIndex</a></li><li><a href="enioka.rules.RuleResult.html">RuleResult</a></li></ul><h3>Namespaces</h3><ul><li><a href="enioka.html">enioka</a></li><li><a href="enioka.rules.html">rules</a></li><li><a href="enioka.rules.actions.html">actions</a></li><li><a href="enioka.rules.conditions.html">conditions</a></li><li><a href="enioka.rules.functions.html">functions</a></li></ul><h3>Interfaces</h3><ul><li><a href="enioka.rules.IRuleFact.html">IRuleFact</a></li><li><a href="enioka.rules.RuleAction.html">RuleAction</a></li><li><a href="enioka.rules.RuleCondition.html">RuleCondition</a></li><li><a href="enioka.rules.RuleElement.html">RuleElement</a></li><li><a href="enioka.rules.RuleFunction.html">RuleFunction</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Apr 16 2016 14:17:05 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
 </html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: RuleEngine</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: RuleEngine</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="enioka.html">enioka</a><a href="enioka.rules.html">.rules</a>.</span>RuleEngine</h2>
+        
+            <div class="class-description">This class provides all access to the rule engine and its
+associated functionality. Which is, by the way trivial: apply rules and return the
+result created by the rules.
+<br/>
+<br/>
+It has for the moment two main entry points:<br/>
+- the constructor to initialize the rule engine with the rules<br/>
+- the applyRules to apply the rules to a given context<br/></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="RuleEngine"><span class="type-signature"></span>new RuleEngine<span class="signature">(properties)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    The constructor is in charge of building all data structures
+from the specified rules and then make possible the use of the rules.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The elements to customize the engine. For the moment the
+following attributes are supported : <br/>
+- rules : the rules as an XML fragment <RULES> <RULE />* </RULES>  <br/>
+- conditionHandlers : the conition handlers to extend core conditions defined <br/>
+- actionHandlers : the action handlers to extend core actions defined <br/>
+- functionHandlers : the function handlers to extend core functions defined <br/></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line1343">line 1343</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="applyRules"><span class="type-signature"></span>applyRules<span class="signature">(context)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The context to use to apply the rules</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line2482">line 2482</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The context "result", ie whatever has been created by the rules
+under the "result" access path, whatever it is.
+</div>
+
+
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="enioka.rules.Rule.html">Rule</a></li><li><a href="enioka.rules.RuleContext.html">RuleContext</a></li><li><a href="enioka.rules.RuleEngine.html">RuleEngine</a></li><li><a href="enioka.rules.RuleExternalObject.html">RuleExternalObject</a></li><li><a href="enioka.rules.RuleFact.html">RuleFact</a></li><li><a href="enioka.rules.RuleIndex.html">RuleIndex</a></li><li><a href="enioka.rules.RuleResult.html">RuleResult</a></li></ul><h3>Namespaces</h3><ul><li><a href="enioka.html">enioka</a></li><li><a href="enioka.rules.html">rules</a></li><li><a href="enioka.rules.actions.html">actions</a></li><li><a href="enioka.rules.conditions.html">conditions</a></li><li><a href="enioka.rules.functions.html">functions</a></li></ul><h3>Interfaces</h3><ul><li><a href="enioka.rules.IRuleFact.html">IRuleFact</a></li><li><a href="enioka.rules.RuleAction.html">RuleAction</a></li><li><a href="enioka.rules.RuleCondition.html">RuleCondition</a></li><li><a href="enioka.rules.RuleElement.html">RuleElement</a></li><li><a href="enioka.rules.RuleFunction.html">RuleFunction</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Apr 16 2016 14:17:05 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

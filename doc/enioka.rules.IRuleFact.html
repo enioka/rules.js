@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Interface: IRuleFact</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Interface: IRuleFact</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="enioka.html">enioka</a><a href="enioka.rules.html">.rules</a>.</span>IRuleFact</h2>
+        
+            <div class="class-description"><br/> <br/>
+Objects must , to be "accessible" by the rule engine, obey an API, which is rather
+simple: get, set and add attribute value. If they do not support this access process, then
+they must be "wrapped" by a wrapper object that will take care to make "as if" the
+objects did indeed follow this API.
+<br/> <br/>
+3 built in wrappers are provided : <br/>
+- <a href="enioka.rules.RuleFact.html">enioka.rules.RuleFact</a> : simple "internal" class to represent facts if not specified by client application <br/>
+- <a href="enioka.rules.RuleExternalObject.html">enioka.rules.RuleExternalObject</a> : simple "external" class to represent facts provided by client applications, without
+knowing exactly what they are <br/>
+- <a href="enioka.rules.RuleResult.html">enioka.rules.RuleResult</a> : simple "result" class to represent info produced by default by the engine and to be
+used by client applications as a default to retrieve "results" returned by the engine
+<br/> <br/></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line312">line 312</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="addAttributeValue"><span class="type-signature"></span>addAttributeValue<span class="signature">(attribute, value)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Sets the value of the specified attribute with
+specified value.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>attribute</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the name of the attribute</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the value to set to the attribute</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line349">line 349</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the array of values of the specified attribute in the object.
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getAttributeValue"><span class="type-signature"></span>getAttributeValue<span class="signature">(attribute)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Gets the value of the specified attribute
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>attribute</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the attribute</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line323">line 323</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the value of the specified attribute in the object.
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="setAttributeValue"><span class="type-signature"></span>setAttributeValue<span class="signature">(attribute, value)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Sets the value of the specified attribute with
+specified value.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>attribute</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the attribute</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value to set to the attribute</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line336">line 336</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the value of the specified attribute in the object.
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="wrapObject"><span class="type-signature"></span>wrapObject<span class="signature">(object, path, context, father)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Wraps object accessible through this path. If provided,
+this method will either create a wrapper object or return the object itself
+if this object has no need to be wrapped at all
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The object to wrap</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current access path to this object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The context in which access is performed, useful to retrieve
+initial context information useful to actually access to the object data</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>father</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The object from which one tries to access this very object</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line383">line 383</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the façade object that will wrap the actual data. As a default returns self.
+</div>
+
+
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="enioka.rules.Rule.html">Rule</a></li><li><a href="enioka.rules.RuleContext.html">RuleContext</a></li><li><a href="enioka.rules.RuleEngine.html">RuleEngine</a></li><li><a href="enioka.rules.RuleExternalObject.html">RuleExternalObject</a></li><li><a href="enioka.rules.RuleFact.html">RuleFact</a></li><li><a href="enioka.rules.RuleIndex.html">RuleIndex</a></li><li><a href="enioka.rules.RuleResult.html">RuleResult</a></li></ul><h3>Namespaces</h3><ul><li><a href="enioka.html">enioka</a></li><li><a href="enioka.rules.html">rules</a></li><li><a href="enioka.rules.actions.html">actions</a></li><li><a href="enioka.rules.conditions.html">conditions</a></li><li><a href="enioka.rules.functions.html">functions</a></li></ul><h3>Interfaces</h3><ul><li><a href="enioka.rules.IRuleFact.html">IRuleFact</a></li><li><a href="enioka.rules.RuleAction.html">RuleAction</a></li><li><a href="enioka.rules.RuleCondition.html">RuleCondition</a></li><li><a href="enioka.rules.RuleElement.html">RuleElement</a></li><li><a href="enioka.rules.RuleFunction.html">RuleFunction</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Apr 16 2016 14:17:05 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -121,7 +121,7 @@ enioka.rules = (
                          };
                      })();
 
-        // finally remap Class.create for backward compatability with prototype
+        // finally remap Class.create for backward compatibility with prototype
         Class.create = function() {
             return Class.extend.apply(this, arguments);
         };
@@ -262,6 +262,153 @@ enioka.rules = (
                 }
             }
         }
+        
+        // A few portability functions to support different rules formats
+        // For the moment rules are not fully compiled into another internal format
+        // For the moment two basic rule types are handled : xml and raw json. Native 
+        // rules object still to be implemented.
+        function getRuleSubElements(element,type,array) {
+            if (element.hasAttribute) {
+                if (array) {
+                    getMatchingTags(element,type,array);
+                    // In XML encoding, any sub element of a rule that is not IF,THEN or RULE is considered an action
+                    if (type == "THEN/*") {
+                        var sons = element.childNodes;
+                        if (sons && sons.length) {
+                            for (var i=0; i<sons.length; i++) {
+                                var son = sons.item(i);
+                                if (son.nodeType !== 1) {
+                                    continue;
+                                }
+                                if ((son.tagName != "IF") && (son.tagName != "THEN") && (son.tagName != "RULE")) {
+                                    array.push(son);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (type == "*") {
+                        return element.childNodes;
+                    }
+                }
+            } else {
+                if ((type == "IF/*") || (type == "*")) {
+                    if (element.conditions) {
+                        if (array) {
+                            for (var i=0; i<element.conditions.length; i++) {
+                                array.push(element.conditions[i]);
+                            }
+                        } else {
+                            return element.conditions;
+                        }
+                    }
+                }
+                if ((type == "THEN/*") || (type == "*")) {
+                    if (element.actions) {
+                        if (array) {
+                            for (var i=0; i<element.actions.length; i++) {
+                                array.push(element.actions[i]);
+                            }
+                        } else {
+                            return element.actions;
+                        }
+                    }
+                }
+                if ((type == "RULE") || (type == "*")) {
+                    if (element.rules) {
+                        if (array) {
+                            for (var i=0; i<element.rules.length; i++) {
+                                array.push(element.rules[i]);
+                            }
+                        } else {
+                            return element.rules;
+                        }
+                    }
+                }
+            }
+        }
+        
+        function getRuleSubElementsNumber(elements) {
+            return elements.length;
+        }
+        
+        function getRuleSubElement(element,i) {
+            if (element.item) {
+                if (element.item(i).nodeType == 1) {
+                    return element.item(i);
+                } else {
+                    return null;
+                }
+            } else {
+                return element[i];
+            }
+        }
+        
+        function getRuleElementType(element) {
+            if (element.tagName) {
+                return element.tagName;
+            } else {
+                return element.type;
+            }
+        }
+        
+        function getRuleElementAttributes(element) {
+            if (element) {
+                if (element.hasAttribute) {
+                    var attributes = [];
+                    for (var i=0; i< element.attributes.length; i++) {
+                        attributes.push(element.attributes.item(i).nodeName);
+                    }
+                    return attributes;
+                } else {
+                    var attributes = [];
+                    for (var key in element) {
+                        if (element.hasOwnProperty(key)) {
+                            if (typeof element[key] != 'object') {
+                                if (key != "type") {
+                                    attributes.push(key);                                    
+                                }
+                            }
+                        }
+                    }
+                    return attributes;
+                }
+            } else {
+                return [];
+            }
+        }
+        
+        function hasRuleElementAttribute(element, attribute) {
+            if (element) {
+                if (element[attribute]) {
+                    return true; 
+                 } else {
+                     if (element.hasAttribute) {
+                         return element.hasAttribute(attribute);
+                     } else {
+                         return false;
+                     }
+                 }
+            } else {
+                return false;
+            }
+        }
+        
+        function getRuleElementAttribute(element,attribute) {
+            if (element) {
+                if (element[attribute]) {
+                   return element[attribute]; 
+                } else {
+                    if (element.getAttribute) {
+                        return element.getAttribute(attribute);
+                    } else {
+                        return null;
+                    }
+                }
+            } else {
+                return null;
+            }
+        }
 
         // Implements the "intersection" between two arrays
         // Used to implement the built in "INTERSECTS" condition type
@@ -378,7 +525,7 @@ enioka.rules = (
              * @param context The context in which access is performed, useful to retrieve
              * initial context information useful to actually access to the object data
              * @param father The object from which one tries to access this very object
-             * @returns the façade object that will wrap the actual data. As a default returns self.
+             * @returns the facade object that will wrap the actual data. As a default returns self.
              */
             wrapObject: function (object, path, context, father) {
                 return this;
@@ -407,7 +554,7 @@ enioka.rules = (
          * context from the outside. Still, this is a bad idea for the moment
          * since this object holds whatever "cache" is needed to  assess
          * rule conditions efficiently. Hence direct access to this context should
-         * not be granted for the moment explicitely.
+         * not be granted for the moment explicitly.
          * @param properties The properties is the 'flat' Object to be passed over to the engine.\n
          * Its attributes will be the names that will be used to access objects of the world.\n
          *
@@ -443,6 +590,100 @@ enioka.rules = (
                     this.values = properties;
                 }
             },
+            
+            /**
+             * @function
+             * @instance
+             * @description
+             * This method is used to access to sub elements of a rule (condition or action) in a portable way
+             * across possible rules format implementation. To be used in custom actions or conditions.
+             *
+             * @param {enioka.rules.RuleElement} element - Rule element to process
+             * @param {string} type - path to sub element looked for
+             * @param {Array} array - array to fill with elements
+             * @returns an opaque set of elements
+             */
+            getRuleSubElements : function (element,type,array) {
+                return getRuleSubElements(element,type,array);
+            },
+            
+            /**
+             * @function
+             * @instance
+             * @description
+             * This method is used to access to sub elements of a rule (condition or action) in a portable way
+             * across possible rules format implementation. To be used in custom actions or conditions.
+             * This method provides the number of elements retrieved.
+             *
+             * @param elements - opaque set of elements
+             * @returns the number of elements
+             */
+            getRuleSubElementsNumber : function (elements) {
+                return getRuleSubElementsNumber(elements);
+            },
+            
+            /**
+             * @function
+             * @instance
+             * @description
+             * This method is used to access to sub elements of a rule (condition or action) in a portable way
+             * across possible rules format implementation. To be used in custom actions or conditions.
+             * This method accesses the nth of elements retrieved.
+             *
+             * @param elements - opaque set of elements
+             * @param {int} - nth element
+             * @returns the nth element
+             */
+            getRuleSubElement : function (elements,i) {
+                return getRuleSubElement(elements,i);
+            },
+            
+            /**
+             * @function
+             * @instance
+             * @description
+             * This method is used to access to elements of a rule (condition or action) in a portable way
+             * across possible rules format implementation. To be used in custom actions or conditions.
+             * This method accesses the list of attribute names defined for the element.
+             *
+             * @param element - opaque element of rule (rule header, action or condition)
+             * @returns an array of attribute names
+             */
+            getRuleElementAttributes : function(rule) {
+                return getRuleElementAttributes(rule);
+            },
+            
+            /**
+             * @function
+             * @instance
+             * @description
+             * This method is used to access to elements of a rule (condition or action) in a portable way
+             * across possible rules format implementation. To be used in custom actions or conditions.
+             * This method accesses the specified attribute value.
+             *
+             * @param element - opaque element of rule (rule header, action or condition)
+             * @param attribute - name of the attribute
+             * @returns the attribute value
+             */
+            getRuleElementAttribute : function(rule, attribute) {
+                return getRuleElementAttribute(rule,attribute);
+            },
+
+            /**
+             * @function
+             * @instance
+             * @description
+             * This method is used to access to elements of a rule (condition or action) in a portable way
+             * across possible rules format implementation. To be used in custom actions or conditions.
+             * This method checks if the specified attribute exists for the object.
+             *
+             * @param element - opaque element of rule (rule header, action or condition)
+             * @param attribute - name of the attribute
+             * @returns {boolean} true or false depending if attribute does exist.
+             */
+            hasRuleElementAttribute : function(rule, attribute) {
+                return hasRuleElementAttribute(rule,attribute);
+            },
 
             /**
              * @function
@@ -454,6 +695,7 @@ enioka.rules = (
              * creation of the engine.
              *
              * @param {enioka.rules.RuleCondition} condition - Condition to be scanned
+             * @returns {boolean} true or false depending if condition is satisfied.
              */
             checkCondition : function(condition) {
                 var engine = this.getEngine();
@@ -493,6 +735,7 @@ enioka.rules = (
              * @instance
              * @description
              * Gets the engine associated to this context.
+             * @returns {enioka.rules.RuleEngine} the engine associated with this context.
              */
             getEngine : function() {
                 return this.engine;
@@ -545,7 +788,7 @@ enioka.rules = (
              * @function
              * @instance
              * @description
-             * Retrieves cached rule's evaluation
+             * Retrieves cached rule's evaluation.
              */
             getRuleEval : function (rule) {
                 return this.rulesEvalCache[rule.id];
@@ -555,7 +798,8 @@ enioka.rules = (
              * @function
              * @instance
              * @description
-             * Sets cached rule's evaluation
+             * Sets cached rule's evaluation. This prevents multiple evaluations of the same rule in the current context.
+             * Used for instance with nested rules. Embedded rules check status of parents.
              */
             setRuleEval : function (rule, match) {
                 return this.rulesEvalCache[rule.id]=match;
@@ -597,7 +841,7 @@ enioka.rules = (
              * @function
              * @instance
              * @description
-             * Internal function that extracts last element of the path considered as (generalized) attribute
+             * Internal function that extracts last element of the path considered as (generalized) attribute.
              * @private
              */
             _getPathAttribute : function(path) {
@@ -609,7 +853,7 @@ enioka.rules = (
              * @function
              * @instance
              * @description
-             *  Internal function to extract an expression with an offset in a value string
+             *  Internal function to extract an expression with an offset in a value string.
              * @private
              */
             _getExpressionIndex : function(expression, start) {
@@ -740,6 +984,7 @@ enioka.rules = (
              * @description
              * General entry point in charge of retrieving a value from a path or an expression <br/>
              * <br/>
+             * @param {string} path - Path or expression specifying a value
              * The general form of such expression is either <br/>
              * - a quoted litteral (with simple or double quotes) <br/>
              * - a string prefixed with a $ sign meaning that what follows (without spaces)
@@ -788,6 +1033,8 @@ enioka.rules = (
              * @instance
              * @description
              * General entry point to set a value to a path
+             * @param {string} path - Path where to store the value
+             * @param {string} value - Value to store
              */
             setValue : function(path,value) {
                 if (!path) return null;
@@ -801,7 +1048,9 @@ enioka.rules = (
              * @instance
              * @description
              * General entry point to add a value to a path
-             * It is not the same as previous  it will force specified path to be an array of values
+             * It is not the same as previous  {@link enioka.rules.RuleContext.setValue} it will force specified path to be an array of values
+             * @param {string} path - Path where to store the value
+             * @param {string} value - Value to store
              */
             addValue : function(path,value) {
                 if (!path) return null;
@@ -943,6 +1192,7 @@ enioka.rules = (
          * - {@link enioka.rules.functions.add}  <br/>
          * - {@link enioka.rules.functions.div}  <br/>
          * - {@link enioka.rules.functions.minus}  <br/>
+         * 
          * One may extend these predefined actions by providing additional function handlers at engine initialization.
          * It is as simple as providing either a named set of classs with the specified RuleFunction interface, with the handler
          * interface or simply of functions with the proper interface.
@@ -952,7 +1202,6 @@ enioka.rules = (
                 }
         };
         RuleFunction = Class.create(RuleFunction, RuleElement);
-
 
         /**
          * @memberof enioka.rules
@@ -969,9 +1218,9 @@ enioka.rules = (
          * @description This this takes an XML source code rule and registers "fast" access to the conditions
          * actions and subrules. It does propagate the rule creation to embedded rules as well.
          * See Rule syntax in documentation for further information on rule syntax.
-         * @param ruleXML The source code for the rule as an XML object
-         * @param father The embedding father rule if any (as an object)
-         * @param id The unique id allocated to identify this rule (integer counter).
+         * @param rule {Object} The source code for the rule as an XML or JSON object 
+         * @param father {enioka.rules.Rule} The embedding father rule if any (as an object)
+         * @param id {number} The unique id allocated to identify this rule (integer counter).
          */
         var Rule = {
             initialize : function(ruleXML, father, id) {
@@ -979,36 +1228,27 @@ enioka.rules = (
                 this.id = id;
                 this.ruleXML = ruleXML;
                 this.conditionsXML = new Array();
-                getMatchingTags(ruleXML,"IF/*", this.conditionsXML);
+                getRuleSubElements(ruleXML,"IF/*", this.conditionsXML);
 
                 this.actionsXML = new Array();
-                getMatchingTags(ruleXML,"THEN/*", this.actionsXML);
+                getRuleSubElements(ruleXML,"THEN/*", this.actionsXML);
 
                 this.rulesXML = new Array();
-                getMatchingTags(ruleXML,"RULE", this.rulesXML);
+                getRuleSubElements(ruleXML,"RULE", this.rulesXML);
 
-                // Small shortcut for those who don't like verbose syntax
-                // Any element that is not a condition nor a rule nor an explicit THEN is an action
-                var sons = ruleXML.childNodes;
-                for (var i=0; i<sons.length; i++) {
-                    var son = sons.item(i);
-                    if (son.nodeType !== 1) {
-                        continue;
-                    }
-                    if ((son.tagName != "IF") && (son.tagName != "THEN") && (son.tagName != "RULE")) {
-                        this.actionsXML.push(son);
-                    }
-                }
                 this.father = father;
             },
 
             /**
-             * @return A boolean indicating whether the specified rule has
+             * @function
+             * @instance
+             * @description This function checks if a rule does use the specified key as a compiled condition
+             * @return {boolean} A boolean indicating whether the specified rule has
              * an "optimized" condition with this access key condition
              * @param key The key (access path) that will be used
              */
             hasKey : function(key) {
-                var hasKey = this.ruleXML.hasAttribute(key);
+                var hasKey = hasRuleElementAttribute(this.ruleXML,key);
                 if (hasKey)
                     return hasKey;
                 if (!this.father)
@@ -1017,21 +1257,27 @@ enioka.rules = (
             },
 
             /**
-             * @return The key value for the optimized key condition to be met
+             * @function
+             * @instance
+             * @description This function returns the key expected values for this rule 
+             * @return {string} The key value for the optimized key condition to be met
              * for this rule to fire. For a compiled condition, it MUST be a constant.
              * @param key The key (access path) that will be used
              */
             getKey : function(key) {
-                var hasKey = this.ruleXML.hasAttribute(key);
+                var hasKey = hasRuleElementAttribute(this.ruleXML,key);
                 if (hasKey)
-                    return this.ruleXML.getAttribute(key);
+                    return getRuleElementAttribute(this.ruleXML,key);
                 if (!this.father)
                     return null;
                 return this.father.getKey(key);
             },
 
             /**
-             * @return true if a given rule has its preconditions verified in the
+             * @function
+             * @instance
+             * @description This function checks if the rule does match in current context
+             * @return {boolean} true if a given rule has its preconditions verified in the
              * provided context, false otherwise.
              * @param context The context in which to evaluate the conditions of the rule
              */
@@ -1063,7 +1309,9 @@ enioka.rules = (
             },
 
             /**
-             * Executes the actions of the specified rule on the provided context
+             * @function
+             * @instance
+             * @description Executes the actions of the specified rule on the provided context
              * @param context The context in which to evaluate the conditions of the rule
              */
             fires : function(context) {
@@ -1074,7 +1322,9 @@ enioka.rules = (
             },
 
             /**
-             * Scans and if applicable executes the specified rule on the provided context
+             * @function
+             * @instance
+             * @description Scans and if applicable executes the specified rule on the provided context
              * @param context The context on which to apply the rule
              */
             process : function(context) {
@@ -1084,12 +1334,15 @@ enioka.rules = (
             },
 
             /**
-             * @return The priority of the rule, as its own
+             * @function
+             * @instance
+             * @description Gets the priority of the rule
+             * @return {number} The priority of the rule, as its own
              * or the priority of its embedding rule if any
              */
             getPriority : function() {
-                if (this.ruleXML.hasAttribute("priority"))
-                    return parseInt(this.ruleXML.getAttribute("priority"));
+                if (hasRuleElementAttribute(this.ruleXML,"priority"))
+                    return parseInt(getRuleElementAttribute(this.ruleXML,"priority"));
                 else
                     if (this.father)
                         return this.father.getPriority();
@@ -1098,14 +1351,17 @@ enioka.rules = (
             },
 
             /**
-             * @return The prefeix of the rule, as its own
+             * @function
+             * @instance
+             * @description Gets the prefix associated with the rule
+             * @return {string} The prefix of the rule, as its own
              * or the prefix of its embedding rule if any, possibly combined with its own
              * if the rule own prefix starts with ".". The prefix is used in rules to
              * "prefix" access path of deduced facts.
              */
             getPrefix : function() {
-                if (this.ruleXML.hasAttribute("prefix")) {
-                    var prefix = this.ruleXML.getAttribute("prefix");
+                if (hasRuleElementAttribute(this.ruleXML,"prefix")) {
+                    var prefix = getRuleElementAttribute(this.ruleXML,"prefix");
                     if (prefix.charAt(0) == '.') {
                         if (this.father)
                             return this.father.getPrefix()+prefix;
@@ -1137,9 +1393,9 @@ enioka.rules = (
          * This class is internal only.
          * <br/>
          * <br/>
-         * This class coule be further enhanced to provide fast access to candidate rules beyond
+         * This class could be further enhanced to provide fast access to candidate rules beyond
          * optimized conditions only... (ultimately a "xrete" like network would be the solution).
-         * Still this indexing technique as is is independent of worl values, which is a significant
+         * Still this indexing technique as is is independent of world values, which is a significant
          * benefit and drastically indexing work for each fact scanned, when they are submitted
          * one by one (or internally scanned through the CHOOSE operator).
          *
@@ -1224,13 +1480,15 @@ enioka.rules = (
             },
 
             /**
+             * @function
              * @instance
              * @description
              * Collect all rules that are a fit to the provided context
-             * @param context The context to use for checking rules
-             * @param keys The array of keys that structure the tree
-             * @param index Current index in the keys array to process
-             * @param rules The array of collected rules where each rule should be added
+             * @param context {enioka.rules.RuleContext} The context to use for checking rules
+             * @param keys {Array} The array of keys that structure the tree
+             * @param index {number} Current index in the keys array to process
+             * @param rules {Array} The array of collected rules where each rule should be added
+             * @return {Array} rules to scan for given context
              */
             getRules : function(context, keys, index, rules) {
                 // Pruning of index without any rules with actions
@@ -1314,9 +1572,7 @@ enioka.rules = (
                 }
                 return this.hasActions;
             }
-
         };
-
         RuleIndex = Class.create(RuleIndex);
 
         /**
@@ -1334,7 +1590,7 @@ enioka.rules = (
          * @param properties The elements to customize the engine. For the moment the
          * following attributes are supported : <br/>
          * - rules : the rules as an XML fragment <RULES> <RULE />* </RULES>  <br/>
-         * - conditionHandlers : the conition handlers to extend core conditions defined <br/>
+         * - conditionHandlers : the condition handlers to extend core conditions defined <br/>
          * - actionHandlers : the action handlers to extend core actions defined <br/>
          * - functionHandlers : the function handlers to extend core functions defined <br/>
          * @description The constructor is in charge of building all data structures
@@ -1355,8 +1611,14 @@ enioka.rules = (
                     }
                 }
                 
+                this.maxRuleID = 0;
+
                 if (properties.rulesXML) {
                     this.rulesXML = properties.rulesXML;
+                    this.rules = [];
+                    for (var i=0;i<this.rulesXML.length;i++) {
+                        this.rules.push(this._parseRule(this.rulesXML[i], null));
+                    }
                 } else {
                     info_debug('Error : no rules specified');
                     return;
@@ -1370,8 +1632,6 @@ enioka.rules = (
                 this.initFunctionHandlers(properties);
                 this.initConditionHandlers(properties);
 
-                this.maxRuleID = 0;
-
                 // One may provide the keys to use to index rules
                 if (properties.keys) {
                     this.keys = properties.keys;
@@ -1382,7 +1642,7 @@ enioka.rules = (
                     this.keysStats = new Object();
                     this.index = new RuleIndex();
                     for (var i=0;i<this.rulesXML.length;i++) {
-                        this._keyStatsOfRule(this.rulesXML[i], this.keys, this.keysStats);
+                        this._keyStatsOfRule(this.rules[i], this.keys, this.keysStats);
                     }
 
                     for (key in this.keysStats) {
@@ -1411,7 +1671,7 @@ enioka.rules = (
 
                 // Once the keys array defined, one can build the index of the rules
                 for (var i=0;i<this.rulesXML.length;i++) {
-                    this._indexRule(this.rulesXML[i], null);
+                    this._indexRule(this.rules[i]);
                 }
                 
                 this.index.optimize();
@@ -1421,7 +1681,7 @@ enioka.rules = (
 
 
             getConditionHandler : function (condition) {
-                return this.conditionHandlers[condition.tagName];
+                return this.conditionHandlers[getRuleElementType(condition)];
             },
 
             initConditionHandlers : function (properties) {
@@ -1438,13 +1698,14 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.AND = function(context,condition) {
-                    if (condition.tagName == "AND") {
-                        var conditions = condition.childNodes;
-                        for (var i=0; i<conditions.length; i++) {
-                            var son = conditions.item(i);
-                            if (son.nodeType !== 1) {
+                    if (getRuleElementType(condition) == "AND") {
+                        var conditions = context.getRuleSubElements(condition,"*",null);
+                        for (var i=0; i<context.getRuleSubElementsNumber(conditions); i++) {
+                            var son = context.getRuleSubElement(conditions,i);
+                            if (son == null) {
                                 continue;
                             }
                             if (!context.checkCondition(son)) return false;
@@ -1460,13 +1721,14 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.NOT = function(context,condition) {
-                    if (condition.tagName == "NOT") {
-                        var conditions = condition.childNodes;
-                        for (var i=0; i<conditions.length; i++) {
-                            var son = conditions.item(i);
-                            if (son.nodeType !== 1) {
+                    if (getRuleElementType(condition) == "NOT") {
+                        var conditions = context.getRuleSubElements(condition,"*",null);
+                        for (var i=0; i<context.getRuleSubElementsNumber(conditions); i++) {
+                            var son = context.getRuleSubElement(conditions,i);
+                            if (son == null) {
                                 continue;
                             }
                             if (context.checkCondition(son)) return false;
@@ -1482,13 +1744,14 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.OR = function(context,condition) {
-                    if (condition.tagName == "OR") {
-                        var conditions = condition.childNodes;
-                        for (var i=0; i<conditions.length; i++) {
-                            var son = conditions.item(i);
-                            if (son.nodeType !== 1) {
+                    if (getRuleElementType(condition) == "OR") {
+                        var conditions = context.getRuleSubElements(condition,"*",null);
+                        for (var i=0; i<context.getRuleSubElementsNumber(conditions); i++) {
+                            var son = context.getRuleSubElement(conditions,i);
+                            if (son == null) {
                                 continue;
                             }
                             if (context.checkCondition(son)) return true;
@@ -1504,16 +1767,16 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.MATCHES = function(context,condition) {
-                    if (condition.tagName == "MATCHES") {
-                        var attributes = condition.attributes;
+                    if (getRuleElementType(condition) == "MATCHES") {
+                        var attributes = getRuleElementAttributes(condition);
                         for (var i=0; i<attributes.length;i++)  {
-                            var attribute = attributes.item(i);
-                            var attributePath = attribute.nodeName;
+                            var attributePath = attributes[i];
                             var value = context.getValue("$"+attributePath);
                             if (value) {
-                                var attributeValue = condition.getAttribute(attributePath);
+                                var attributeValue = getRuleElementAttribute(condition,attributePath);
                                 var patternvalue = context.getValue(attributeValue);
                                 if (patternvalue) {
                                     var pattern = new RegExp(patternvalue,"gi");
@@ -1537,11 +1800,12 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.EQUALS = function(context,condition) {
-                    if (condition.tagName == "EQUALS") {
-                        var value1 = context.getValue(condition.getAttribute("value1"));
-                        var value2 = context.getValue(condition.getAttribute("value2"));
+                    if (getRuleElementType(condition) == "EQUALS") {
+                        var value1 = context.getValue(getRuleElementAttribute(condition,"value1"));
+                        var value2 = context.getValue(getRuleElementAttribute(condition,"value2"));
                         return value1 == value2;
                     }
                 };
@@ -1553,10 +1817,11 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.ISNULL = function(context,condition) {
-                    if (condition.tagName == "ISNULL") {
-                        var value = context.getValue(condition.getAttribute("value"));
+                    if (getRuleElementType(condition) == "ISNULL") {
+                        var value = context.getValue(getRuleElementAttribute(condition,"value"));
                         return ((typeof(value) == "undefined") || (value == null));
                     }
                 };
@@ -1568,11 +1833,12 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.INTERSECTS = function(context,condition) {
-                    if (condition.tagName == "INTERSECTS") {
-                        var value1 = context.getValue(condition.getAttribute("value1"));
-                        var value2 = context.getValue(condition.getAttribute("value2"));
+                    if (getRuleElementType(condition) == "INTERSECTS") {
+                        var value1 = context.getValue(getRuleElementAttribute(condition,"value1"));
+                        var value2 = context.getValue(getRuleElementAttribute(condition,"value2"));
                         return intersection(value1, value2);
                     }
                 };
@@ -1584,11 +1850,12 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.LESS = function(context,condition) {
-                    if (condition.tagName == "LESS") {
-                        var value1 = context.getValue(condition.getAttribute("value1"));
-                        var value2 = context.getValue(condition.getAttribute("value2"));
+                    if (getRuleElementType(condition) == "LESS") {
+                        var value1 = context.getValue(getRuleElementAttribute(condition,"value1"));
+                        var value2 = context.getValue(getRuleElementAttribute(condition,"value2"));
                         return value1 < value2;
                     }
                 };
@@ -1600,11 +1867,12 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.MORE = function(context,condition) {
-                    if (condition.tagName == "MORE") {
-                        var value1 = context.getValue(condition.getAttribute("value1"));
-                        var value2 = context.getValue(condition.getAttribute("value2"));
+                    if (getRuleElementType(condition) == "MORE") {
+                        var value1 = context.getValue(getRuleElementAttribute(condition,"value1"));
+                        var value2 = context.getValue(getRuleElementAttribute(condition,"value2"));
                         return value1 > value2;
                     }
                 };
@@ -1616,11 +1884,12 @@ enioka.rules = (
                  * @memberof enioka.rules.conditions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleCondition} condition - the condition object passed to the rule
+                 * @return {boolean} true of false if condition is met or not
                  */
                 this.conditionHandlers.LIKE = function(context,condition) {
-                    if (condition.tagName == "LIKE") {
-                        var value1 = context.getValue(condition.getAttribute("value1"));
-                        var value2 = context.getValue(condition.getAttribute("value2"));
+                    if (getRuleElementType(condition) == "LIKE") {
+                        var value1 = context.getValue(getRuleElementAttribute(condition,"value1"));
+                        var value2 = context.getValue(getRuleElementAttribute(condition,"value2"));
                         var pattern = new RegExp(value2,"gi");
                         return pattern.test(value1);
                     }
@@ -1652,7 +1921,7 @@ enioka.rules = (
                  * @description This function prints the values passed in the info_debug interface.
                  * @memberof enioka.rules.functions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
-                 * @param {Array} args - the args passed to the function
+                 * @param {Array} arguments - the arguments passed to the function
                  */
                 this.functionHandlers.print = function(context, args) {
                     var result = "";
@@ -1670,7 +1939,8 @@ enioka.rules = (
                  * @description This function catenates the values passed in a global string.
                  * @memberof enioka.rules.functions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
-                 * @param {Array} args - the args passed to the function
+                 * @param {Array} arguments - the arguments passed to the function
+                 * @return {string} concatenated string
                  */
                 this.functionHandlers.catenate = function(context, args) {
                     var result = "";
@@ -1687,7 +1957,8 @@ enioka.rules = (
                  * @description This function adds the values passed.
                  * @memberof enioka.rules.functions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
-                 * @param {Array} args - the args passed to the function
+                 * @param {Array} arguments - the arguments passed to the function
+                 * @return {number} sum of values
                  */
                 this.functionHandlers.plus = function(context, args) {
                     var result = 0;
@@ -1704,7 +1975,8 @@ enioka.rules = (
                  * @description This function multiplies the values passed.
                  * @memberof enioka.rules.functions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
-                 * @param {Array} args - the args passed to the function
+                 * @param {Array} arguments - the arguments passed to the function
+                 * @return {number} product of values
                  */
                 this.functionHandlers.mul = function(context, args) {
                     var result = 1;
@@ -1721,7 +1993,8 @@ enioka.rules = (
                  * @description This function divides the first value by the other values passed.
                  * @memberof enioka.rules.functions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
-                 * @param {Array} args - the args passed to the function
+                 * @param {Array} arguments - the arguments passed to the function
+                 * @return {number} division of first value by following values
                  */
                 this.functionHandlers.div = function(context, args) {
                     var result = parseFloat(args[1]);
@@ -1743,7 +2016,8 @@ enioka.rules = (
                  * @description This function substracts the values to the first passed.
                  * @memberof enioka.rules.functions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
-                 * @param {Array} args - the args passed to the function
+                 * @param {Array} arguments - the arguments passed to the function
+                 * @return {number} substraction of values
                  */
                 this.functionHandlers.minus = function(context, args) {
                     var result = parseFloat(args[1]);
@@ -1769,14 +2043,14 @@ enioka.rules = (
             },
 
             getActionHandler : function (action) {
-                return this.actionHandlers[action.tagName];
+                return this.actionHandlers[getRuleElementType(action)];
             },
 
             // TODO here : make possible to use full XML capability
             // for nice (HTML) message and possible susbtitution in ${} syntax
             // of context variables....
             _getMessage : function (context, action) {
-                return context.getValue(action.getAttribute("message"));
+                return context.getValue(getRuleElementAttribute(action,"message"));
             },
 
             initActionHandlers : function (properties) {
@@ -1796,9 +2070,9 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 this.actionHandlers.LOG = function(context, action, rule) {
-                    if (action.tagName == "LOG") {
+                    if (getRuleElementType(action) == "LOG") {
                         var message = context.getEngine()._getMessage(context, action) ;
-                        var level = context.getValue(action.getAttribute("level"));
+                        var level = context.getValue(getRuleElementAttribute(action,"level"));
                         if ((level == null) || (level = "")) level="debug";
                         if (message) {
                             if (level == "debug") info_debug(message);
@@ -1818,9 +2092,9 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 this.actionHandlers.LOG_USER = function(context, action, rule) {
-                    if (action.tagName == "LOG_USER") {
+                    if (getRuleElementType(action) == "LOG_USER") {
                         var message = context.getEngine()._getMessage(context, action) ;
-                        var level = context.getValue(action.getAttribute("level"));
+                        var level = context.getValue(getRuleElementAttribute(action,"level"));
                         if ((level == null) || (level = "")) level="debug";
                         if (message) {
                             if (level == "debug") user_debug(message);
@@ -1860,11 +2134,11 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 var assignHandler = function (context, action, rule) {
-                    if ((action.tagName == "SET") || (action.tagName == "ADD") || (action.tagName == "CLEAR")) {
-                        var attributes = action.attributes;
+                    if ((getRuleElementType(action) == "SET") || (getRuleElementType(action) == "ADD") || (getRuleElementType(action) == "CLEAR")) {
+                        var attributes = getRuleElementAttributes(action);
                         var prefix = null;
-                        if (action.hasAttribute("prefix")) {
-                            prefix = action.getAttribute("prefix");
+                        if (hasRuleElementAttribute(action,"prefix")) {
+                            prefix = getRuleElementAttribute(action,"prefix");
                             if (prefix.charAt(0)=='.') {
                                 prefix = rule.getPrefix() + prefix;
                             }
@@ -1875,23 +2149,22 @@ enioka.rules = (
                             prefix=prefix+".";
                         }
                         for (var i=0; i<attributes.length;i++)  {
-                            var attribute = attributes.item(i);
-                            var attributePath = attribute.nodeName;
+                            var attributePath = attributes[i];
                             if (attributePath=="prefix") {
                                 continue;
                             }
-                            var attributeValue = action.getAttribute(attributePath);
+                            var attributeValue = getRuleElementAttribute(action,attributePath);
                             var value = context.getValue(attributeValue);
-                            if (action.tagName == "CLEAR") {
+                            if (getRuleElementType(action) == "CLEAR") {
                                 attributePath = prefix + attributePath;
                                 context.setValue(attributePath,null);
                             }
                             if (value) {
-                                if (action.tagName == "SET") {
+                                if (getRuleElementType(action) == "SET") {
                                     attributePath = prefix + attributePath;
                                     context.setValue(attributePath,value);
                                 }
-                                if (action.tagName == "ADD") {
+                                if (getRuleElementType(action) == "ADD") {
                                     attributePath = prefix + attributePath;
                                     context.addValue(attributePath,value);
                                 }
@@ -1924,12 +2197,12 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 var textAssignHandler = function (context, action, rule) {
-                    if ((action.tagName == "SET_TEXT") || (action.tagName == "ADD_TEXT")) {
-                        var path = context.getValue(action.getAttribute("path"));
+                    if ((getRuleElementType(action) == "SET_TEXT") || (getRuleElementType(action) == "ADD_TEXT")) {
+                        var path = context.getValue(getRuleElementAttribute(action,"path"));
                         if (path){
                             var prefix = null;
-                            if (action.hasAttribute("prefix")) {
-                                prefix = action.getAttribute("prefix");
+                            if (hasRuleElementAttribute(action,"prefix")) {
+                                prefix = getRuleElementAttribute(action,"prefix");
                                 if (prefix.charAt(0)=='.') {
                                     prefix = rule.getPrefix() + prefix;
                                 }
@@ -1958,11 +2231,14 @@ enioka.rules = (
                                     }
                                 }
                             }
+                            if (action.text) {
+                                value = action.text;
+                            }
                             if (value) {
-                                if (action.tagName == "SET_TEXT") {
+                                if (getRuleElementType(action) == "SET_TEXT") {
                                     context.setValue(path,value);
                                 }
-                                if (action.tagName == "ADD_TEXT") {
+                                if (getRuleElementType(action) == "ADD_TEXT") {
                                     context.addValue(path,value);
                                 }
                             }
@@ -2003,12 +2279,12 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                  var dassignHandler = function (context, action, rule) {
-                    if ((action.tagName == "DSET") || (action.tagName == "DADD") || (action.tagName == "DCLEAR")) {
-                        var path = context.getValue(action.getAttribute("path"));
+                    if ((getRuleElementType(action) == "DSET") || (getRuleElementType(action) == "DADD") || (getRuleElementType(action) == "DCLEAR")) {
+                        var path = context.getValue(getRuleElementAttribute(action,"path"));
                         if (path){
                             var prefix = null;
-                            if (action.hasAttribute("prefix")) {
-                                prefix = action.getAttribute("prefix");
+                            if (hasRuleElementAttribute(action,"prefix")) {
+                                prefix = getRuleElementAttribute(action,"prefix");
                                 if (prefix.charAt(0)=='.') {
                                     prefix = rule.getPrefix() + prefix;
                                 }
@@ -2019,16 +2295,16 @@ enioka.rules = (
                                 prefix=prefix+".";
                             }
                             path = prefix + path;
-                            if (action.tagName == "DCLEAR") {
+                            if (getRuleElementType(action) == "DCLEAR") {
                                 context.setValue(path,null);
                                 return;
                             }
-                            var value = context.getValue(action.getAttribute("value"));
+                            var value = context.getValue(getRuleElementAttribute(action,"value"));
                             if (value) {
-                                if (action.tagName == "DSET") {
+                                if (getRuleElementType(action) == "DSET") {
                                     context.setValue(path,value);
                                 }
-                                if (action.tagName == "DADD") {
+                                if (getRuleElementType(action) == "DADD") {
                                     context.addValue(path,value);
                                 }
                             }
@@ -2060,13 +2336,13 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 var objectHandler = function (context, action, rule) {
-                    if ((action.tagName == "SET_OBJECT") || (action.tagName == "ADD_OBJECT")) {
-                        var attributes = action.attributes;
-                        var path = context.getValue(action.getAttribute("path"));
+                    if ((getRuleElementType(action) == "SET_OBJECT") || (getRuleElementType(action) == "ADD_OBJECT")) {
+                        var attributes = getRuleElementAttributes(action);
+                        var path = context.getValue(getRuleElementAttribute(action,"path"));
                         if (path){
                             var prefix = null;
-                            if (action.hasAttribute("prefix")) {
-                                prefix = action.getAttribute("prefix");
+                            if (hasRuleElementAttribute(action,"prefix")) {
+                                prefix = getRuleElementAttribute(action,"prefix");
                                 if (prefix.charAt(0)=='.') {
                                     prefix = rule.getPrefix() + prefix;
                                 }
@@ -2079,21 +2355,20 @@ enioka.rules = (
                             path = prefix + path;
                             var object={};
                             for (var i=0; i<attributes.length;i++)  {
-                                var attribute = attributes.item(i);
-                                var attributePath = attribute.nodeName;
+                                var attributePath = attributes[i];
                                 if (attributePath=="prefix") {
                                     continue;
                                 }
                                 if (attributePath=="path") {
                                     continue;
                                 }
-                                var attributeValue = action.getAttribute(attributePath);
+                                var attributeValue = getRuleElementAttribute(action,attributePath);
                                 var value = context.getValue(attributeValue);
                                 if (value) {
                                     object[attributePath] = value;
                                 }
                             }
-                            if (action.tagName == "SET_OBJECT") {
+                            if (getRuleElementType(action) == "SET_OBJECT") {
                                 var objects = context.getValue("$"+path);
                                 if (objects && (objects.constructor == Array)) {
                                     if (object.id) {
@@ -2133,7 +2408,7 @@ enioka.rules = (
                                     }
                                 }
                             }
-                            if (action.tagName == "ADD_OBJECT") {
+                            if (getRuleElementType(action) == "ADD_OBJECT") {
                                 var objects = context.getValue("$"+path);
                                 if (objects) {
                                     if (object.id) {
@@ -2169,18 +2444,18 @@ enioka.rules = (
                  * @function
                  * @static
                  * @name CONTROL
-                 * @description This action CONTROLS the engine, by executing the specifed action and priority.
+                 * @description This action CONTROLS the engine, by executing the specified action and priority.
                  * @memberof enioka.rules.actions
                  * @param {enioka.rules.RuleContext} context - the context to be used in the rule implementation
                  * @param {enioka.rules.RuleAction} action - the action object passed to the rule
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 this.actionHandlers.CONTROL = function (context, action, rule) {
-                    if (action.tagName == "CONTROL") {
-                        var control = context.getValue(action.getAttribute("action"));
+                    if (getRuleElementType(action) == "CONTROL") {
+                        var control = context.getValue(getRuleElementAttribute(action,"action"));
                         if (control) {
                             context.control = control;
-                            var priority = context.getValue(action.getAttribute("priority"));
+                            var priority = context.getValue(getRuleElementAttribute(action,"priority"));
                             if (priority) context.priority = priority;
                         }
                     }
@@ -2197,7 +2472,7 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 this.actionHandlers.RECURSE = function(context, action, rule) {
-                    if (action.tagName == "RECURSE") {
+                    if (getRuleElementType(action) == "RECURSE") {
                         var engine = context.getEngine();
                         engine.run(context);
                     }
@@ -2215,15 +2490,14 @@ enioka.rules = (
                  * @param {enioka.rules.Rule} rule - the current scanned rule passed
                  */
                 this.actionHandlers.CHOOSE = function(context,action, rule) {
-                    if (action.tagName == "CHOOSE") {
-                        var attributes = action.attributes;
+                    if (getRuleElementType(action) == "CHOOSE") {
+                        var attributes = getRuleElementAttributes(action);
                         for (var i=0; i<attributes.length;i++)  {
-                            var attribute = attributes.item(i);
-                            var attributePath = attribute.nodeName;
+                            var attributePath = attributes[i];
                             if (attributePath=="prefix") {
                                 continue;
                             }
-                            var attributeValue = action.getAttribute(attributePath);
+                            var attributeValue = getRuleElementAttribute(action,attributePath);
                             var value = context.getValue(attributeValue);
                             if (value) {
                                 if (value.length) {
@@ -2232,8 +2506,8 @@ enioka.rules = (
                                         context.setValue(attributePath, binding);
                                         var actions = action.childNodes;
                                         for (var k=0; k < actions.length; k++) {
-                                            var son = actions.item(k);
-                                            if (son.nodeType !== 1) {
+                                            var son = actions[k];
+                                            if (son == null) {
                                                 continue;
                                             }
                                             context.fireAction(son, rule);
@@ -2247,8 +2521,8 @@ enioka.rules = (
                                     context.setValue(attributePath, binding);
                                     var actions = action.childNodes;
                                     for (var k=0; k < actions.length; k++) {
-                                        var son = actions.item(k);
-                                        if (son.nodeType !== 1) {
+                                        var son = actions[k];
+                                        if (son == null) {
                                             continue;
                                         }
                                         context.fireAction(son, rule);
@@ -2272,16 +2546,13 @@ enioka.rules = (
 
             // Internal method to score keys for the different rules
             // in order to sort the keys given the rules set
-            _keyStatsOfRule : function(ruleXML, keys, keysStats) {
-                var rulesXML = new Array();
-                getMatchingTags(ruleXML,"RULE", rulesXML);
+            _keyStatsOfRule : function(rule, keys, keysStats) {
                 var keyCount = 0;
                 var keyOffset = keys.length;
                 var count = 1;
-                var attributes = ruleXML.attributes;
+                var attributes = getRuleElementAttributes(rule.ruleXML);
                 for (var i=0; i<attributes.length;i++)  {
-                    var attribute = attributes.item(i);
-                    var attributeName = attribute.nodeName;
+                    var attributeName = attributes[i];
                     if (attributeName == "priority") continue;
                     if (attributeName == "prefix") continue;
                     if (keys.indexOf(attributeName) != -1) {
@@ -2292,13 +2563,13 @@ enioka.rules = (
                     keys.push(attributeName);
                 }
 
-                for (i=0;i<rulesXML.length;i++) {
-                    count += this._keyStatsOfRule(rulesXML[i], keys, keysStats);
+                for (i=0;i<rule.rules.length;i++) {
+                    count += this._keyStatsOfRule(rule.rules[i], keys, keysStats);
                 }
 
                 for (i=0; i< keyCount; i++) {
                     var key = keys[keyOffset+i];
-                    var value = ruleXML.getAttribute(key);
+                    var value = getRuleElementAttribute(rule.ruleXML, key);
                     if (!keysStats[key]) {
                         keysStats[key] = new Object();
                         keysStats[key]._count = count;
@@ -2320,14 +2591,22 @@ enioka.rules = (
 
                 return count;
             },
+            
+            _parseRule : function(ruleXML, father) {
+                var rule = new Rule(ruleXML, father, this.maxRuleID++);
+                rule.rules = [];
+                for (var i=0;i<rule.rulesXML.length;i++) {
+                    rule.rules.push(this._parseRule(rule.rulesXML[i], rule));
+                }
+                return rule;
+            },
 
             // Internal method to launch the indexing of all rules, by walking down
             // the tree of rules (may be flat)
-            _indexRule : function(ruleXML, father) {
-                var rule = new Rule(ruleXML, father, this.maxRuleID++);
+            _indexRule : function(rule) {
                 this.index.addRule(this.keys, 0, rule);
-                for (var i=0;i<rule.rulesXML.length;i++) {
-                    this._indexRule(rule.rulesXML[i], rule);
+                for (var i=0;i<rule.rules.length;i++) {
+                    this._indexRule(rule.rules[i]);
                 }
             },
             
@@ -2485,11 +2764,7 @@ enioka.rules = (
                 return this.run(context);
             }
         };
-
         RuleEngine = Class.create(RuleEngine);
-        
-
-
 
         /**
          * @memberof enioka.rules
@@ -2513,7 +2788,6 @@ enioka.rules = (
             },
         };
         RuleFact = Class.create(IRuleFact, RuleFact);
-
 
         /**
          * @memberof enioka.rules
@@ -2590,7 +2864,6 @@ enioka.rules = (
             }
         };
         RuleExternalObject = Class.extend(RuleFact, RuleExternalObject);
-
 
         /**
          * @memberof enioka.rules

@@ -47,7 +47,7 @@ For more advanced uses, one may need to access and manipulate this
 context from the outside. Still, this is a bad idea for the moment
 since this object holds whatever "cache" is needed to  assess
 rule conditions efficiently. Hence direct access to this context should
-not be granted for the moment explicitely.</div>
+not be granted for the moment explicitly.</div>
         
     
 </header>
@@ -167,7 +167,7 @@ If the object is actually flat, it will be wrapped by a built in wrapper, enioka
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line422">line 422</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line569">line 569</a>
     </li></ul></dd>
     
 
@@ -216,7 +216,7 @@ If the object is actually flat, it will be wrapped by a built in wrapper, enioka
 
     
 
-    <h4 class="name" id="addValue"><span class="type-signature"></span>addValue<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addValue"><span class="type-signature"></span>addValue<span class="signature">(path, value)</span><span class="type-signature"></span></h4>
 
     
 
@@ -224,7 +224,7 @@ If the object is actually flat, it will be wrapped by a built in wrapper, enioka
 
 <div class="description">
     General entry point to add a value to a path
-It is not the same as previous  it will force specified path to be an array of values
+It is not the same as previous  enioka.rules.RuleContext.setValue it will force specified path to be an array of values
 </div>
 
 
@@ -233,6 +233,78 @@ It is not the same as previous  it will force specified path to be an array of v
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Path where to store the value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value to store</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -268,7 +340,7 @@ It is not the same as previous  it will force specified path to be an array of v
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line806">line 806</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line1055">line 1055</a>
     </li></ul></dd>
     
 
@@ -299,7 +371,7 @@ It is not the same as previous  it will force specified path to be an array of v
 
     
 
-    <h4 class="name" id="checkCondition"><span class="type-signature"></span>checkCondition<span class="signature">(condition)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="checkCondition"><span class="type-signature"></span>checkCondition<span class="signature">(condition)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
@@ -402,7 +474,7 @@ creation of the engine.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line458">line 458</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line700">line 700</a>
     </li></ul></dd>
     
 
@@ -425,6 +497,28 @@ creation of the engine.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true or false depending if condition is satisfied.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -486,7 +580,7 @@ control invalidates it)
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line530">line 530</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line773">line 773</a>
     </li></ul></dd>
     
 
@@ -643,7 +737,7 @@ creation of the engine.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line480">line 480</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line722">line 722</a>
     </li></ul></dd>
     
 
@@ -674,7 +768,7 @@ creation of the engine.
 
     
 
-    <h4 class="name" id="getEngine"><span class="type-signature"></span>getEngine<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getEngine"><span class="type-signature"></span>getEngine<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="enioka.rules.RuleEngine.html">enioka.rules.RuleEngine</a>}</span></h4>
 
     
 
@@ -725,7 +819,7 @@ creation of the engine.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line497">line 497</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line740">line 740</a>
     </li></ul></dd>
     
 
@@ -748,6 +842,322 @@ creation of the engine.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the engine associated with this context.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="enioka.rules.RuleEngine.html">enioka.rules.RuleEngine</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRuleElementAttribute"><span class="type-signature"></span>getRuleElementAttribute<span class="signature">(element, attribute)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This method is used to access to elements of a rule (condition or action) in a portable way
+across possible rules format implementation. To be used in custom actions or conditions.
+This method accesses the specified attribute value.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">opaque element of rule (rule header, action or condition)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>attribute</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">name of the attribute</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line668">line 668</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the attribute value
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRuleElementAttributes"><span class="type-signature"></span>getRuleElementAttributes<span class="signature">(element)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This method is used to access to elements of a rule (condition or action) in a portable way
+across possible rules format implementation. To be used in custom actions or conditions.
+This method accesses the list of attribute names defined for the element.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">opaque element of rule (rule header, action or condition)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line652">line 652</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an array of attribute names
+</div>
+
+
+
+    
 
 
 
@@ -763,7 +1173,7 @@ creation of the engine.
 
 
 <div class="description">
-    Retrieves cached rule's evaluation
+    Retrieves cached rule's evaluation.
 </div>
 
 
@@ -807,7 +1217,7 @@ creation of the engine.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line550">line 550</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line793">line 793</a>
     </li></ul></dd>
     
 
@@ -838,23 +1248,16 @@ creation of the engine.
 
     
 
-    <h4 class="name" id="getValue"><span class="type-signature"></span>getValue<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getRuleSubElement"><span class="type-signature"></span>getRuleSubElement<span class="signature">(elements)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    General entry point in charge of retrieving a value from a path or an expression <br/>
-<br/>
-The general form of such expression is either <br/>
-- a quoted litteral (with simple or double quotes) <br/>
-- a string prefixed with a $ sign meaning that what follows (without spaces)
-is an access path in context
-- a string starting with a ( , then it is considered an expression in lisp
-like syntax with first item being a function, and following values are parameters.
-Expressions can be nested at will <br/>
-- a litteral in any other case
+    This method is used to access to sub elements of a rule (condition or action) in a portable way
+across possible rules format implementation. To be used in custom actions or conditions.
+This method accesses the nth of elements retrieved.
 </div>
 
 
@@ -863,6 +1266,73 @@ Expressions can be nested at will <br/>
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>elements</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">opaque set of elements</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">nth element</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -898,7 +1368,7 @@ Expressions can be nested at will <br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line752">line 752</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line637">line 637</a>
     </li></ul></dd>
     
 
@@ -921,6 +1391,650 @@ Expressions can be nested at will <br/>
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the nth element
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRuleSubElements"><span class="type-signature"></span>getRuleSubElements<span class="signature">(element, type, array)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This method is used to access to sub elements of a rule (condition or action) in a portable way
+across possible rules format implementation. To be used in custom actions or conditions.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="enioka.rules.RuleElement.html">enioka.rules.RuleElement</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Rule element to process</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">path to sub element looked for</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>array</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">array to fill with elements</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line606">line 606</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an opaque set of elements
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRuleSubElementsNumber"><span class="type-signature"></span>getRuleSubElementsNumber<span class="signature">(elements)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This method is used to access to sub elements of a rule (condition or action) in a portable way
+across possible rules format implementation. To be used in custom actions or conditions.
+This method provides the number of elements retrieved.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>elements</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">opaque set of elements</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line621">line 621</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the number of elements
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getValue"><span class="type-signature"></span>getValue<span class="signature">(path)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    General entry point in charge of retrieving a value from a path or an expression <br/>
+<br/>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Path or expression specifying a value
+The general form of such expression is either <br/>
+- a quoted litteral (with simple or double quotes) <br/>
+- a string prefixed with a $ sign meaning that what follows (without spaces)
+is an access path in context
+- a string starting with a ( , then it is considered an expression in lisp
+like syntax with first item being a function, and following values are parameters.
+Expressions can be nested at will <br/>
+- a litteral in any other case</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line997">line 997</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="hasRuleElementAttribute"><span class="type-signature"></span>hasRuleElementAttribute<span class="signature">(element, attribute)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    This method is used to access to elements of a rule (condition or action) in a portable way
+across possible rules format implementation. To be used in custom actions or conditions.
+This method checks if the specified attribute exists for the object.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">opaque element of rule (rule header, action or condition)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>attribute</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">name of the attribute</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line684">line 684</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true or false depending if attribute does exist.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -980,7 +2094,7 @@ Expressions can be nested at will <br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line540">line 540</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line783">line 783</a>
     </li></ul></dd>
     
 
@@ -1062,7 +2176,7 @@ Expressions can be nested at will <br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line507">line 507</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line750">line 750</a>
     </li></ul></dd>
     
 
@@ -1100,7 +2214,8 @@ Expressions can be nested at will <br/>
 
 
 <div class="description">
-    Sets cached rule's evaluation
+    Sets cached rule's evaluation. This prevents multiple evaluations of the same rule in the current context.
+Used for instance with nested rules. Embedded rules check status of parents.
 </div>
 
 
@@ -1144,7 +2259,7 @@ Expressions can be nested at will <br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line560">line 560</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line804">line 804</a>
     </li></ul></dd>
     
 
@@ -1175,7 +2290,7 @@ Expressions can be nested at will <br/>
 
     
 
-    <h4 class="name" id="setValue"><span class="type-signature"></span>setValue<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setValue"><span class="type-signature"></span>setValue<span class="signature">(path, value)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1191,6 +2306,78 @@ Expressions can be nested at will <br/>
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Path where to store the value</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Value to store</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -1226,7 +2413,7 @@ Expressions can be nested at will <br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line792">line 792</a>
+        <a href="Rules.js.html">Rules.js</a>, <a href="Rules.js.html#line1039">line 1039</a>
     </li></ul></dd>
     
 
@@ -1274,7 +2461,7 @@ Expressions can be nested at will <br/>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Apr 16 2016 14:17:05 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Nov 20 2016 14:43:39 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

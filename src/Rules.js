@@ -2818,8 +2818,12 @@ enioka.rules = (
                         return this.object.getAttributeValue(attribute);
                     }
                     else {
-                        info_debug('This object is not accessible by the rule engine ' , this.object);
-                        return null;
+                        if (this.object[attribute]) {
+                            return this.object[attribute];
+                        } else {
+                            info_debug('This object is not accessible by the rule engine ' , this.object);
+                            return null;
+                        }
                     }
                 }
                 else {
